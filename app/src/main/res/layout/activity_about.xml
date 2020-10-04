@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AboutActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/aboutActivityToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:subtitleTextColor="#FFFFFF"
+        app:title="@string/title_activity_about"
+        app:titleTextColor="#FFFFFF" />
+
+    <TextView
+        android:id="@+id/groupNumTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:background="#B5B5B5"
+        android:paddingVertical="10dp"
+        android:text="@string/group_number"
+        android:textAlignment="center"
+        android:textSize="26sp"
+        app:layout_constraintEnd_toEndOf="@+id/aboutActivityToolbar"
+        app:layout_constraintStart_toStartOf="@+id/aboutActivityToolbar"
+        app:layout_constraintTop_toBottomOf="@+id/aboutActivityToolbar" />
+
+    <TextView
+        android:id="@+id/pedroMarquesTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/pedroMarquesTextView"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/groupNumTextView"
+        app:layout_constraintStart_toStartOf="@+id/groupNumTextView"
+        app:layout_constraintTop_toBottomOf="@+id/groupNumTextView" />
+
+    <TextView
+        android:id="@+id/pedroAlmeidaTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/pedroAlmeidaTextView"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/pedroMarquesTextView"
+        app:layout_constraintStart_toStartOf="@+id/pedroMarquesTextView"
+        app:layout_constraintTop_toBottomOf="@+id/pedroMarquesTextView" />
+
+    <TextView
+        android:id="@+id/inesLoboTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/inesLoboTextView"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/pedroAlmeidaTextView"
+        app:layout_constraintStart_toStartOf="@+id/pedroAlmeidaTextView"
+        app:layout_constraintTop_toBottomOf="@+id/pedroAlmeidaTextView" />
+
+    <TextView
+        android:id="@+id/inesGoncalvesTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/inesGoncalvesTextView"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/inesLoboTextView"
+        app:layout_constraintStart_toStartOf="@+id/inesLoboTextView"
+        app:layout_constraintTop_toBottomOf="@+id/inesLoboTextView" />
+</androidx.constraintlayout.widget.ConstraintLayout>
