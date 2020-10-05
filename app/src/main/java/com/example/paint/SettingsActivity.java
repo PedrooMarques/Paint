@@ -2,6 +2,7 @@ package com.example.paint;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,11 +10,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
+import java.util.Objects;
+
 import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    Preference preference;
+    private Preference preference;
     private SharedPreferences sharedPref;
 
     @Override
@@ -39,7 +42,7 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
-            findPreference("background").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            Objects.requireNonNull(findPreference("background")).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     AmbilWarnaDialog colorPicker = new AmbilWarnaDialog(getContext(), 1, new AmbilWarnaDialog.OnAmbilWarnaListener() {
@@ -50,7 +53,7 @@ public class SettingsActivity extends AppCompatActivity {
                         @Override
                         public void onOk(AmbilWarnaDialog dialog, int color) {
 
-
+                            Toast.makeText(getContext(), "Changed Background Color", Toast.LENGTH_SHORT).show();
                         }
                     });
                     colorPicker.show();
