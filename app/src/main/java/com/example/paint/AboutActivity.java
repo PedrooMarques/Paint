@@ -20,6 +20,7 @@ public class AboutActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
 
         // Enable the Up button
+        assert ab != null;
         ab.setDisplayHomeAsUpEnabled(true);
     }
 }
