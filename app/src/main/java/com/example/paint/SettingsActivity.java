@@ -1,5 +1,7 @@
 package com.example.paint;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -52,8 +54,15 @@ public class SettingsActivity extends AppCompatActivity {
 
                         @Override
                         public void onOk(AmbilWarnaDialog dialog, int color) {
-                            MainActivity.selectedColor = color;
+
                             Toast.makeText(getContext(), "Changed Background Color", Toast.LENGTH_SHORT).show();
+
+                            //Save color to shared preferences
+                            SharedPreferences sharedPref = requireActivity().getSharedPreferences(
+                                    getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPref.edit();
+                            editor.putInt(getString(R.string.background_color_preference), color);
+                            editor.apply();
                         }
                     });
                     colorPicker.show();

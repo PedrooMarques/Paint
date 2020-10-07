@@ -1,6 +1,9 @@
 package com.example.paint;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,7 +21,7 @@ import com.google.android.material.navigation.NavigationView;
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
-    public static int selectedColor = 0;
+    public int defaultValue = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,11 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        Activity activity;
+        SharedPreferences sharedPref = getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        int selectedColor = sharedPref.getInt(getString(R.string.background_color_preference), defaultValue);
 
         drawer.setBackgroundColor(selectedColor);
     }
