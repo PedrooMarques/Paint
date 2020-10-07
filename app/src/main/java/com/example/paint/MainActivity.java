@@ -18,7 +18,7 @@ import com.google.android.material.navigation.NavigationView;
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
-    public static int selectedColor = -1;
+    public static int selectedColor = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +39,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-        if (selectedColor != -1)
-            drawer.setBackgroundColor(selectedColor);
+        drawer.setBackgroundColor(selectedColor);
     }
 
     @Override
