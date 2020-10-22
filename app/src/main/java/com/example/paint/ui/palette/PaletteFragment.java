@@ -7,12 +7,12 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.paint.R;
 
-public class PaletteFragment extends Fragment {
+public class PaletteFragment extends DialogFragment {
 
     private PaletteViewModel mViewModel;
 
