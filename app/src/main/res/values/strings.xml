@@ -43,5 +43,6 @@
     <string name="background_color_preference">background_color_preference</string>
     <string name="preference_file_key">com.example.paint.PREFERENCE_FILE_KEY</string>
     <string name="palettefragment">PaletteFragment</string>
+    <string name="platte_dialogfragment_button">Platte DialogFragment Button</string>
 
 </resources>

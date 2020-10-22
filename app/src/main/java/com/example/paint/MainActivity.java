@@ -7,15 +7,18 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.DialogFragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.paint.ui.palette.PaletteFragment;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -108,5 +111,11 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt(getString(R.string.background_color_preference), Color.WHITE);
         editor.apply();
+    }
+
+    public void openPaletteDialogFragment(View view) {
+        // Create the fragment and show it as a dialog.
+        DialogFragment paletteDialogFragment = PaletteFragment.newInstance();
+        paletteDialogFragment.show(getSupportFragmentManager(), "dialogFragment");
     }
 }
