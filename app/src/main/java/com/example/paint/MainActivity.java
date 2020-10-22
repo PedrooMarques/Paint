@@ -3,6 +3,7 @@ package com.example.paint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -100,13 +101,12 @@ public class MainActivity extends AppCompatActivity {
         drawer.setBackgroundColor(selectedColor);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
+    // This onStop will reset the app background to WHITE when the app closes
     @Override
     protected void onStop() {
         super.onStop();
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(getString(R.string.background_color_preference), Color.WHITE);
+        editor.apply();
     }
 }
