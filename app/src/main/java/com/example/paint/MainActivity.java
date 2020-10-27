@@ -38,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        sharedPref = getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
         // the main activity layout
         drawer = findViewById(R.id.drawer_layout);
         // the side menu layout
@@ -45,17 +48,12 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
+                R.id.nav_canvas, R.id.nav_gallery, R.id.nav_slideshow)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-
-        sharedPref = getSharedPreferences(
-                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        int selectedColor = sharedPref.getInt(getString(R.string.background_color_preference), defaultValue);
-        drawer.setBackgroundColor(selectedColor);
     }
 
     @Override
@@ -96,11 +94,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // This is for when the android back button is pressed instead of the app back action
-    // so it applies the changes on restart
+    // so it applies the changes on resume
     @Override
     protected void onResume() {
         super.onResume();
-        int selectedColor = sharedPref.getInt(getString(R.string.background_color_preference), defaultValue);
+        int selectedColor = sharedPref.getInt(
+                getString(R.string.background_color_preference), defaultValue);
         drawer.setBackgroundColor(selectedColor);
     }
 
@@ -108,6 +107,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(getString(R.string.background_color_preference), Color.WHITE);
+        editor.apply();
+    }
+
+    // This onPause will reset the app background to WHITE when the app pauses
+    @Override
+    protected void onPause() {
+        super.onPause();
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt(getString(R.string.background_color_preference), Color.WHITE);
         editor.apply();

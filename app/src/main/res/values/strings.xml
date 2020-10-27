@@ -26,7 +26,7 @@
     <string name="action_settings">Settings</string>
     <string name="action_about">About</string>
 
-    <string name="menu_home">Home</string>
+    <string name="menu_canvas">Canvas</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
 
@@ -42,6 +42,8 @@
     <!-- Shared preferences -->
     <string name="background_color_preference">background_color_preference</string>
     <string name="preference_file_key">com.example.paint.PREFERENCE_FILE_KEY</string>
+
+    <!-- Palette Fragment -->
     <string name="palettefragment">PaletteFragment</string>
     <string name="platte_dialogfragment_button">Platte DialogFragment Button</string>
 
