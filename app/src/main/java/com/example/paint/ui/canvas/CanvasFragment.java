@@ -23,14 +23,6 @@ public class CanvasFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-//        GestureListener mGestureListener = new GestureListener();
-//        GestureDetector mGestureDetector = new GestureDetector(getContext(), mGestureListener);
-//        mGestureDetector.setIsLongpressEnabled(true);
-//        mGestureDetector.setOnDoubleTapListener(mGestureListener);
-//
-//        Canvas paintCanvas = new Canvas(getContext(), null, mGestureDetector);
-//        mGestureListener.setCanvas(paintCanvas);
-
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_canvas, container, false);
