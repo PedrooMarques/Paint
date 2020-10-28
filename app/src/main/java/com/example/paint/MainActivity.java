@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
-
+//
 //    // This is for when the android back button is pressed instead of the app back action
 //    // so it applies the changes on resume
 //    @Override

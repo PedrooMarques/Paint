@@ -1,6 +1,7 @@
 package com.example.paint.ui.palette;
 
 import android.app.Dialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,9 +26,9 @@ public class PaletteFragment extends DialogFragment {
 
     private ColorPickerView colorPickerView;
 
-    private final String BRUSH_SIZE_TEXT_VIEW_HEADER = "Brush size: ";
     private SeekBar brushSizeSlider;
     private String brushSizeString;
+    private final String BRUSH_SIZE_TEXT_VIEW_HEADER = "Brush size: ";
 
     public static PaletteFragment newInstance() {
         return new PaletteFragment();
@@ -75,7 +76,9 @@ public class PaletteFragment extends DialogFragment {
             }
         });
 
-        colorPickerView.setInitialColor(mViewModel.getBrushColor().getValue());
+        if (mViewModel.getBrushColor().getValue() != null)
+            colorPickerView.setInitialColor(mViewModel.getBrushColor().getValue());
+        else colorPickerView.setInitialColor(Color.BLACK);
         colorPickerView.subscribe((color, fromUser, shouldPropagate) -> {
             mViewModel.setBrushColor(color);
         });
