@@ -85,6 +85,14 @@ public class Canvas extends View implements View.OnTouchListener {
         paint.setStrokeWidth(size);
     }
 
+    public int getBrushColor() {
+        return paint.getColor();
+    }
+
+    public void setBrushColor(int color) {
+        paint.setColor(color);
+    }
+
     public void erase() {
         paint.setColor(11);
     }

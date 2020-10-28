@@ -17,9 +17,13 @@ import com.example.paint.R;
 
 import java.util.Objects;
 
+import top.defaults.colorpicker.ColorPickerView;
+
 public class PaletteFragment extends DialogFragment {
 
     private PaletteViewModel mViewModel;
+
+    private ColorPickerView colorPickerView;
 
     private final String BRUSH_SIZE_TEXT_VIEW_HEADER = "Brush size: ";
     private SeekBar brushSizeSlider;
@@ -42,9 +46,10 @@ public class PaletteFragment extends DialogFragment {
 
         mViewModel = new ViewModelProvider(requireActivity()).get(PaletteViewModel.class);
 
+        // find Views by Id
         TextView brushSizeTextView = view.findViewById(R.id.sliderValueTextView);
-
         brushSizeSlider = view.findViewById(R.id.brushSizeSlider);
+        colorPickerView = view.findViewById(R.id.paletteColorPicker);
 
         brushSizeString = BRUSH_SIZE_TEXT_VIEW_HEADER + brushSizeSlider.getProgress();
         brushSizeTextView.setText(brushSizeString);
@@ -69,6 +74,12 @@ public class PaletteFragment extends DialogFragment {
 
             }
         });
+
+        colorPickerView.setInitialColor(mViewModel.getBrushColor().getValue());
+        colorPickerView.subscribe((color, fromUser, shouldPropagate) -> {
+            mViewModel.setBrushColor(color);
+        });
+
     }
 
     @Override

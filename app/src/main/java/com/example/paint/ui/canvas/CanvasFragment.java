@@ -54,6 +54,9 @@ public class CanvasFragment extends Fragment {
         ConstraintLayout layout = view.findViewById(R.id.fragmentCanvasConstraintLayout);
         layout.addView(paintCanvas);
 
+        mPaletteSharedViewModel.setBrushColor(paintCanvas.getBrushColor());
+
         mPaletteSharedViewModel.getBrushSize().observe(getViewLifecycleOwner(), paintCanvas::setBrushSize);
+        mPaletteSharedViewModel.getBrushColor().observe(getViewLifecycleOwner(), paintCanvas::setBrushColor);
     }
 }
