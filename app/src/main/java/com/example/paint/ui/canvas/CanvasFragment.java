@@ -10,21 +10,24 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.paint.Canvas;
 import com.example.paint.GestureListener;
 import com.example.paint.R;
+import com.example.paint.ui.palette.PaletteViewModel;
 
 public class CanvasFragment extends Fragment {
 
-    private HomeViewModel homeViewModel;
+    private CanvasViewModel mCanvasViewModel;
+    private PaletteViewModel mPaletteSharedViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        homeViewModel =
-                ViewModelProviders.of(this).get(HomeViewModel.class);
+        mCanvasViewModel = new ViewModelProvider(this).get(CanvasViewModel.class);
+        mPaletteSharedViewModel = new ViewModelProvider(requireActivity()).get(PaletteViewModel.class);
+
         View root = inflater.inflate(R.layout.fragment_canvas, container, false);
 //        final TextView textView = root.findViewById(R.id.text_home);
 //        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
@@ -50,5 +53,7 @@ public class CanvasFragment extends Fragment {
 
         ConstraintLayout layout = view.findViewById(R.id.fragmentCanvasConstraintLayout);
         layout.addView(paintCanvas);
+
+        mPaletteSharedViewModel.getBrushSize().observe(getViewLifecycleOwner(), paintCanvas::setBrushSize);
     }
 }

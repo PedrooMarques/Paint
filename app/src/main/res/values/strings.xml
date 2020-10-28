@@ -46,5 +46,7 @@
     <!-- Palette Fragment -->
     <string name="palettefragment">PaletteFragment</string>
     <string name="platte_dialogfragment_button">Platte DialogFragment Button</string>
+    <string name="alert_dialog_apply">Apply</string>
+    <string name="alert_dialog_cancel">Cancel</string>
 
 </resources>

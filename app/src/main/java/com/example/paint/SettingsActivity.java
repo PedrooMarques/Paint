@@ -11,8 +11,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
-import java.util.Objects;
-
 import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -44,7 +42,7 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
-            Objects.requireNonNull(findPreference("background")).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            findPreference("background").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     AmbilWarnaDialog colorPicker = new AmbilWarnaDialog(getContext(), 1, new AmbilWarnaDialog.OnAmbilWarnaListener() {

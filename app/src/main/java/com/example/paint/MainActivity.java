@@ -93,15 +93,17 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
-    // This is for when the android back button is pressed instead of the app back action
-    // so it applies the changes on resume
-    @Override
-    protected void onResume() {
-        super.onResume();
-        int selectedColor = sharedPref.getInt(
-                getString(R.string.background_color_preference), defaultValue);
-        drawer.setBackgroundColor(selectedColor);
-    }
+//    // This is for when the android back button is pressed instead of the app back action
+//    // so it applies the changes on resume
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        int selectedColor = sharedPref.getInt(
+//                getString(R.string.background_color_preference), defaultValue);
+//        drawer.setBackgroundColor(selectedColor);
+//    }
+
+    //TODO background resets when orientation changed
 
     // This onStop will reset the app background to WHITE when the app closes
     @Override

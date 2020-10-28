@@ -7,14 +7,30 @@
     android:layout_height="match_parent"
     tools:context=".ui.palette.PaletteFragment">
 
-    <TextView
-        android:id="@+id/palette_text"
-        android:layout_width="wrap_content"
+    <SeekBar
+        android:id="@+id/brushSizeSlider"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/palettefragment"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:max="200"
+        android:progress="25"
+        android:thumb="@drawable/ic_baseline_brush_24"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sliderValueTextView" />
+
+    <TextView
+        android:id="@+id/sliderValueTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="54dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
