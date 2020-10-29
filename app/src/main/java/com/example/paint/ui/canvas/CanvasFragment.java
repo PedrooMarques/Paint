@@ -49,6 +49,7 @@ public class CanvasFragment extends Fragment {
         layout.addView(paintCanvas);
 
         mPaletteSharedViewModel.setBrushColor(paintCanvas.getBrushColor());
+        mPaletteSharedViewModel.setBrushSize(paintCanvas.getBrushSize());
 
         mPaletteSharedViewModel.getBrushSize().observe(getViewLifecycleOwner(), paintCanvas::setBrushSize);
         mPaletteSharedViewModel.getBrushColor().observe(getViewLifecycleOwner(), paintCanvas::setBrushColor);

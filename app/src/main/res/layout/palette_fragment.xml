@@ -48,13 +48,33 @@
         app:layout_constraintTop_toBottomOf="@+id/brushSizeSlider" />
 
     <Button
+        android:id="@+id/applyButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/alert_dialog_apply"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/paletteColorPicker" />
+
+    <Button
         android:id="@+id/resetButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="reset"
-        app:layout_constraintEnd_toEndOf="@+id/paletteColorPicker"
-        app:layout_constraintStart_toStartOf="@+id/paletteColorPicker"
-        app:layout_constraintTop_toBottomOf="@+id/paletteColorPicker" />
+        android:text="@string/alert_dialog_reset"
+        app:layout_constraintBottom_toBottomOf="@+id/applyButton"
+        app:layout_constraintEnd_toStartOf="@+id/dismissButton"
+        app:layout_constraintStart_toEndOf="@+id/applyButton"
+        app:layout_constraintTop_toTopOf="@+id/applyButton" />
+
+    <Button
+        android:id="@+id/dismissButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:text="@string/alert_dialog_dismiss"
+        app:layout_constraintBottom_toBottomOf="@+id/resetButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/resetButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
