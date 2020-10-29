@@ -90,7 +90,7 @@ public class Canvas extends View implements View.OnTouchListener {
     public void reset() {
         setBackgroundColor(Color.WHITE);
         path.reset();
-        paint.reset();
+        initPaint();
     }
 
     public void undo() {
