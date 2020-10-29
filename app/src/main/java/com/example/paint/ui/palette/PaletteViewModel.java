@@ -13,13 +13,9 @@ public class PaletteViewModel extends ViewModel {
     // Tracks the brush color
     private MutableLiveData<Float> brushSize;
 
-    // Tracks the canvas color
-    //private MutableLiveData<Integer> canvasColor;
-
     public PaletteViewModel() {
         brushColor = new MutableLiveData<>();
         brushSize = new MutableLiveData<>();
-        //canvasColor = new MutableLiveData<>();
     }
 
     public MutableLiveData<Integer> getBrushColor() {
@@ -38,12 +34,4 @@ public class PaletteViewModel extends ViewModel {
         this.brushSize.setValue(brushSize);
     }
 
-//TODO estes metodos abaixo so servem se metermos o background na palette
-//    public MutableLiveData<Integer> getCanvasColor() {
-//        return canvasColor;
-//    }
-//
-//    public void setCanvasColor(int value) {
-//        this.canvasColor.setValue(value);
-//    }
 }

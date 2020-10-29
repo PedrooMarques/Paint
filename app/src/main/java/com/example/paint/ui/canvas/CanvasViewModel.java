@@ -1,19 +1,26 @@
 package com.example.paint.ui.canvas;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 public class CanvasViewModel extends ViewModel {
 
-    private MutableLiveData<String> mText;
+    // Live data instances
+
+    //TODO talvez de para usar para guardar os path
+
+    // Tracks the canvas color in sharedPrefs
+    private MutableLiveData<Integer> canvasColor;
 
     public CanvasViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is canvas fragment");
+        canvasColor = new MutableLiveData<>();
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public MutableLiveData<Integer> getCanvasColor() {
+        return canvasColor;
+    }
+
+    public void setCanvasColor(int value) {
+        this.canvasColor.setValue(value);
     }
 }

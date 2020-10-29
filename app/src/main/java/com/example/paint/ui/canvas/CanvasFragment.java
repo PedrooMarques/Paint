@@ -28,15 +28,7 @@ public class CanvasFragment extends Fragment {
         mCanvasViewModel = new ViewModelProvider(this).get(CanvasViewModel.class);
         mPaletteSharedViewModel = new ViewModelProvider(requireActivity()).get(PaletteViewModel.class);
 
-        View root = inflater.inflate(R.layout.fragment_canvas, container, false);
-//        final TextView textView = root.findViewById(R.id.text_home);
-//        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-//            @Override
-//            public void onChanged(@Nullable String s) {
-//                textView.setText(s);
-//            }
-//        });
-        return root;
+        return inflater.inflate(R.layout.fragment_canvas, container, false);
     }
 
     @Override
@@ -48,12 +40,13 @@ public class CanvasFragment extends Fragment {
         mGestureDetector.setIsLongpressEnabled(true);
         mGestureDetector.setOnDoubleTapListener(mGestureListener);
 
+        // create new Canvas custom view
         Canvas paintCanvas = new Canvas(getContext(), null, mGestureDetector);
         mGestureListener.setCanvas(paintCanvas);
 
+        // define Canvas as layout view
         ConstraintLayout layout = view.findViewById(R.id.fragmentCanvasConstraintLayout);
         layout.addView(paintCanvas);
-
 
         mPaletteSharedViewModel.setBrushColor(paintCanvas.getBrushColor());
 

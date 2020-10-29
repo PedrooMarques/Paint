@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -24,9 +25,6 @@ public class PaletteFragment extends DialogFragment {
 
     private PaletteViewModel mViewModel;
 
-    private ColorPickerView colorPickerView;
-
-    private SeekBar brushSizeSlider;
     private String brushSizeString;
     private final String BRUSH_SIZE_TEXT_VIEW_HEADER = "Brush size: ";
 
@@ -49,8 +47,9 @@ public class PaletteFragment extends DialogFragment {
 
         // find Views by Id
         TextView brushSizeTextView = view.findViewById(R.id.sliderValueTextView);
-        brushSizeSlider = view.findViewById(R.id.brushSizeSlider);
-        colorPickerView = view.findViewById(R.id.paletteColorPicker);
+        SeekBar brushSizeSlider = view.findViewById(R.id.brushSizeSlider);
+        ColorPickerView colorPickerView = view.findViewById(R.id.paletteColorPicker);
+        Button resetButton = view.findViewById(R.id.resetButton);
 
         brushSizeString = BRUSH_SIZE_TEXT_VIEW_HEADER + brushSizeSlider.getProgress();
         brushSizeTextView.setText(brushSizeString);
@@ -81,6 +80,11 @@ public class PaletteFragment extends DialogFragment {
         else colorPickerView.setInitialColor(Color.BLACK);
         colorPickerView.subscribe((color, fromUser, shouldPropagate) -> {
             mViewModel.setBrushColor(color);
+        });
+
+        resetButton.setOnClickListener(v -> {
+            brushSizeSlider.setProgress(25);
+            colorPickerView.reset();
         });
 
     }
