@@ -104,9 +104,11 @@ public class PaletteFragment extends DialogFragment {
             Toast.makeText(getContext(), "Changes applied", Toast.LENGTH_SHORT).show();
         });
 
-        dismissButton.setOnClickListener(v -> {
-            d.dismiss();
-        });
+        if (dismissButton != null) {
+            dismissButton.setOnClickListener(v -> {
+                d.dismiss();
+            });
+        }
     }
 
     @Override

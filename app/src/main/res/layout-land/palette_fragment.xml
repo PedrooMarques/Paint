@@ -11,7 +11,6 @@
         android:id="@+id/brushSizeSlider"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:max="200"
         android:progress="25"
         android:thumb="@drawable/ic_baseline_brush_24"
@@ -24,9 +23,9 @@
         android:id="@+id/sliderValueTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -34,12 +33,12 @@
 
     <top.defaults.colorpicker.ColorPickerView
         android:id="@+id/paletteColorPicker"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="189dp"
+        android:layout_height="0dp"
         android:layout_marginTop="8dp"
         app:enableAlpha="true"
+        app:layout_constraintBottom_toTopOf="@+id/applyButton"
         app:layout_constraintEnd_toEndOf="@+id/brushSizeSlider"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/brushSizeSlider"
         app:layout_constraintTop_toBottomOf="@+id/brushSizeSlider" />
 
@@ -47,9 +46,11 @@
         android:id="@+id/applyButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:text="@string/alert_dialog_apply"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/resetButton"
         app:layout_constraintStart_toStartOf="@+id/brushSizeSlider"
         app:layout_constraintTop_toBottomOf="@+id/paletteColorPicker" />
 
@@ -59,17 +60,9 @@
         android:layout_height="wrap_content"
         android:text="@string/alert_dialog_reset"
         app:layout_constraintBottom_toBottomOf="@+id/applyButton"
-        app:layout_constraintEnd_toStartOf="@+id/dismissButton"
+        app:layout_constraintEnd_toEndOf="@+id/brushSizeSlider"
         app:layout_constraintStart_toEndOf="@+id/applyButton"
         app:layout_constraintTop_toTopOf="@+id/applyButton" />
 
-    <Button
-        android:id="@+id/dismissButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/alert_dialog_dismiss"
-        app:layout_constraintBottom_toBottomOf="@+id/resetButton"
-        app:layout_constraintEnd_toEndOf="@+id/brushSizeSlider"
-        app:layout_constraintTop_toTopOf="@+id/resetButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
