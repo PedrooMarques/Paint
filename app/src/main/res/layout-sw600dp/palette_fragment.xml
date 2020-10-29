@@ -13,7 +13,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:max="200"
-        android:progress="25"
         android:thumb="@drawable/ic_baseline_brush_24"
         app:layout_constraintEnd_toEndOf="@id/sliderValueTextView"
         app:layout_constraintStart_toStartOf="@id/sliderValueTextView"

@@ -1,7 +1,6 @@
 package com.example.paint;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -15,31 +14,17 @@ public class Canvas extends View implements View.OnTouchListener {
     private Paint paint = new Paint();
     private Path path = new Path();
     private GestureDetector mGestureDetector;
-    private SharedPreferences sharedPref;
-    private static int selectedColor;
-    private int defaultValue = 0;
 
     public Canvas(Context context, AttributeSet attrs) {
         super(context, attrs);
-        sharedPref = context.getSharedPreferences(
-                context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        selectedColor = sharedPref.getInt(
-                context.getString(R.string.background_color_preference), defaultValue);
         setOnTouchListener(this);
-        setBackgroundColor(selectedColor);
         initPaint();
     }
 
     public Canvas(Context context, AttributeSet attrs, GestureDetector gestureDetector) {
         super(context, attrs);
-
         this.mGestureDetector = gestureDetector;
         setOnTouchListener(this);
-        sharedPref = context.getSharedPreferences(
-                context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        selectedColor = sharedPref.getInt(
-                context.getString(R.string.background_color_preference), defaultValue);
-        setBackgroundColor(selectedColor);
         initPaint();
     }
 
@@ -98,8 +83,8 @@ public class Canvas extends View implements View.OnTouchListener {
         paint.setColor(color);
     }
 
-    public void erase() {
-        paint.setColor(11);
+    public void setCanvasColor(int color) {
+        setBackgroundColor(color);
     }
 
     public void reset() {

@@ -64,8 +64,6 @@ public class PaletteFragment extends DialogFragment {
         brushSizeString = BRUSH_SIZE_TEXT_VIEW_HEADER + brushSizeSlider.getProgress();
         brushSizeTextView.setText(brushSizeString);
 
-        //TODO set progress to last progress
-
         brushSizeSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -85,9 +83,18 @@ public class PaletteFragment extends DialogFragment {
             }
         });
 
+        // set initial brush color
         if (mViewModel.getBrushColor().getValue() != null)
             colorPickerView.setInitialColor(mViewModel.getBrushColor().getValue());
         else colorPickerView.setInitialColor(Color.BLACK);
+
+        // set initial brush size
+        if (mViewModel.getBrushSize().getValue() != null)
+            brushSizeSlider.setProgress(mViewModel.getBrushSize().getValue().intValue());
+            // this else is needed for the landscape cases where the palette fragment is created
+            // alongside the canvas custom view hence the custom view hasn't defined a value
+            // for the brush size which then hasn't been added to the view model
+        else brushSizeSlider.setProgress(20);
 
         colorPickerView.subscribe((color, fromUser, shouldPropagate) -> {
             tempBrushColor = color;
@@ -101,6 +108,8 @@ public class PaletteFragment extends DialogFragment {
         applyButton.setOnClickListener(v -> {
             mViewModel.setBrushSize(tempBrushSize);
             mViewModel.setBrushColor(tempBrushColor);
+            if (d != null && d.isShowing())
+                d.dismiss();
             Toast.makeText(getContext(), "Changes applied", Toast.LENGTH_SHORT).show();
         });
 

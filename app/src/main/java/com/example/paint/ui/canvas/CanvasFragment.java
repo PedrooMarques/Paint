@@ -1,5 +1,7 @@
 package com.example.paint.ui.canvas;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -40,8 +42,17 @@ public class CanvasFragment extends Fragment {
         mGestureDetector.setIsLongpressEnabled(true);
         mGestureDetector.setOnDoubleTapListener(mGestureListener);
 
+        SharedPreferences sharedPref = requireContext().getSharedPreferences(
+                requireContext().getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        int defaultValue = 0;
+        int selectedColor = sharedPref.getInt(
+                requireContext().getString(R.string.background_color_preference), defaultValue);
+
+        mCanvasViewModel.setCanvasColor(selectedColor);
+
         // create new Canvas custom view
         Canvas paintCanvas = new Canvas(getContext(), null, mGestureDetector);
+        paintCanvas.setBackgroundColor(selectedColor);
         mGestureListener.setCanvas(paintCanvas);
 
         // define Canvas as layout view
@@ -53,5 +64,7 @@ public class CanvasFragment extends Fragment {
 
         mPaletteSharedViewModel.getBrushSize().observe(getViewLifecycleOwner(), paintCanvas::setBrushSize);
         mPaletteSharedViewModel.getBrushColor().observe(getViewLifecycleOwner(), paintCanvas::setBrushColor);
+
+        mCanvasViewModel.getCanvasColor().observe(getViewLifecycleOwner(), paintCanvas::setCanvasColor);
     }
 }
