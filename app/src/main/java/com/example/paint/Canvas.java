@@ -8,13 +8,14 @@ import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 public class Canvas extends View implements View.OnTouchListener {
 
-    private LinkedHashMap<Path, Paint> paths = new LinkedHashMap<>();
+    private LinkedHashMap<Path, Paint> paths;
 
     private Path lastStoredPath;
 
@@ -25,6 +26,7 @@ public class Canvas extends View implements View.OnTouchListener {
     public Canvas(Context context, AttributeSet attrs) {
         super(context, attrs);
         setOnTouchListener(this);
+        paths = new LinkedHashMap<>();
         initPaint();
     }
 
@@ -32,6 +34,7 @@ public class Canvas extends View implements View.OnTouchListener {
         super(context, attrs);
         this.mGestureDetector = gestureDetector;
         setOnTouchListener(this);
+        paths = new LinkedHashMap<>();
         initPaint();
     }
 
@@ -58,8 +61,8 @@ public class Canvas extends View implements View.OnTouchListener {
     public boolean onTouchEvent(MotionEvent event) {
 
         Paint tempPaint = new Paint(paint);
-        paths.put(path, tempPaint);
         lastStoredPath = new Path(path);
+        paths.put(lastStoredPath, tempPaint);
 
         float eventX = event.getX();
         float eventY = event.getY();
@@ -112,7 +115,11 @@ public class Canvas extends View implements View.OnTouchListener {
     }
 
     public void undo() {
-        paths.remove(lastStoredPath);
+        if (paths.isEmpty()) {
+            Toast.makeText(getContext(), "Nothing to undo", Toast.LENGTH_SHORT).show();
+        } else {
+            paths.remove(lastStoredPath);
+        }
     }
 
     private void initPaint() {
