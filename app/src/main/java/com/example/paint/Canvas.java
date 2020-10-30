@@ -8,7 +8,6 @@ import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
@@ -44,6 +43,7 @@ public class Canvas extends View implements View.OnTouchListener {
         for (Entry<Path, Paint> e : paths.entrySet()) {
             canvas.drawPath(e.getKey(), e.getValue());// draws the path with the paint
         }
+        canvas.drawPath(path, paint);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class Canvas extends View implements View.OnTouchListener {
 
         Paint tempPaint = new Paint(paint);
         lastStoredPath = new Path(path);
-        paths.put(lastStoredPath, tempPaint);
+        //paths.put(lastStoredPath, tempPaint);
 
         float eventX = event.getX();
         float eventY = event.getY();
@@ -74,6 +74,7 @@ public class Canvas extends View implements View.OnTouchListener {
                 path.lineTo(eventX, eventY);// makes a line to the point each time this event is fired
                 break;
             case MotionEvent.ACTION_UP:// when you lift your finger
+                paths.put(path, tempPaint);
                 path = new Path();
                 performClick();
                 break;
@@ -115,11 +116,7 @@ public class Canvas extends View implements View.OnTouchListener {
     }
 
     public void undo() {
-        if (paths.isEmpty()) {
-            Toast.makeText(getContext(), "Nothing to undo", Toast.LENGTH_SHORT).show();
-        } else {
-            paths.remove(lastStoredPath);
-        }
+        paths.remove(path);
     }
 
     private void initPaint() {
