@@ -27,8 +27,8 @@ public class CanvasFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        mCanvasViewModel = new ViewModelProvider(this).get(CanvasViewModel.class);
-        mPaletteSharedViewModel = new ViewModelProvider(requireActivity()).get(PaletteViewModel.class);
+        //TODO mudar para onCreate View
+        //TODO ao levantar criar um path e paint
 
         return inflater.inflate(R.layout.fragment_canvas, container, false);
     }
@@ -36,6 +36,9 @@ public class CanvasFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        mCanvasViewModel = new ViewModelProvider(this).get(CanvasViewModel.class);
+        mPaletteSharedViewModel = new ViewModelProvider(requireActivity()).get(PaletteViewModel.class);
 
         GestureListener mGestureListener = new GestureListener();
         GestureDetector mGestureDetector = new GestureDetector(getContext(), mGestureListener);
@@ -53,6 +56,12 @@ public class CanvasFragment extends Fragment {
         // create new Canvas custom view
         Canvas paintCanvas = new Canvas(getContext(), null, mGestureDetector);
         paintCanvas.setBackgroundColor(selectedColor);
+
+        if (mPaletteSharedViewModel.getBrushSize().getValue() != null)
+            paintCanvas.setBrushSize(mPaletteSharedViewModel.getBrushSize().getValue());
+        if (mPaletteSharedViewModel.getBrushColor().getValue() != null)
+            paintCanvas.setBrushColor(mPaletteSharedViewModel.getBrushColor().getValue());
+
         mGestureListener.setCanvas(paintCanvas);
 
         // define Canvas as layout view

@@ -9,15 +9,21 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.util.ArrayList;
+
 public class Canvas extends View implements View.OnTouchListener {
 
-    private Paint paint = new Paint();
-    private Path path = new Path();
+    private ArrayList<Path> paths;
+
+    private Paint paint;
+    private Path path;
     private GestureDetector mGestureDetector;
 
     public Canvas(Context context, AttributeSet attrs) {
         super(context, attrs);
         setOnTouchListener(this);
+        paint = new Paint();
+        path = new Path();
         initPaint();
     }
 
@@ -25,6 +31,8 @@ public class Canvas extends View implements View.OnTouchListener {
         super(context, attrs);
         this.mGestureDetector = gestureDetector;
         setOnTouchListener(this);
+        paint = new Paint();
+        path = new Path();
         initPaint();
     }
 
