@@ -27,8 +27,6 @@ public class CanvasFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        //TODO ao levantar criar um path e paint
-
         return inflater.inflate(R.layout.fragment_canvas, container, false);
     }
 

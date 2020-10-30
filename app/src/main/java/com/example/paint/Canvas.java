@@ -9,12 +9,14 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 public class Canvas extends View implements View.OnTouchListener {
 
-    private HashMap<Path, Paint> paths = new HashMap<>();
+    private LinkedHashMap<Path, Paint> paths = new LinkedHashMap<>();
+
+    private Path lastStoredPath;
 
     private Paint paint = new Paint();
     private Path path = new Path();
@@ -35,8 +37,9 @@ public class Canvas extends View implements View.OnTouchListener {
 
     @Override
     protected void onDraw(android.graphics.Canvas canvas) {
-        for (Entry e : paths.entrySet()) {
-            canvas.drawPath((Path) e.getKey(), (Paint) e.getValue());// draws the path with the paint
+        super.onDraw(canvas);
+        for (Entry<Path, Paint> e : paths.entrySet()) {
+            canvas.drawPath(e.getKey(), e.getValue());// draws the path with the paint
         }
     }
 
@@ -56,6 +59,7 @@ public class Canvas extends View implements View.OnTouchListener {
 
         Paint tempPaint = new Paint(paint);
         paths.put(path, tempPaint);
+        lastStoredPath = new Path(path);
 
         float eventX = event.getX();
         float eventY = event.getY();
@@ -108,7 +112,7 @@ public class Canvas extends View implements View.OnTouchListener {
     }
 
     public void undo() {
-        path.rewind();
+        paths.remove(lastStoredPath);
     }
 
     private void initPaint() {
