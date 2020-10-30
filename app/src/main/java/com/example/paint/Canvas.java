@@ -5,18 +5,18 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.util.Pair;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
-import java.util.LinkedHashMap;
-import java.util.Map.Entry;
+import java.util.ArrayList;
 
 public class Canvas extends View implements View.OnTouchListener {
 
-    private LinkedHashMap<Path, Paint> paths;
-
-    private Path lastStoredPath;
+    private ArrayList<Pair<Path, Paint>> paths;
 
     private Paint paint = new Paint();
     private Path path = new Path();
@@ -25,7 +25,7 @@ public class Canvas extends View implements View.OnTouchListener {
     public Canvas(Context context, AttributeSet attrs) {
         super(context, attrs);
         setOnTouchListener(this);
-        paths = new LinkedHashMap<>();
+        paths = new ArrayList<>();
         initPaint();
     }
 
@@ -33,15 +33,15 @@ public class Canvas extends View implements View.OnTouchListener {
         super(context, attrs);
         this.mGestureDetector = gestureDetector;
         setOnTouchListener(this);
-        paths = new LinkedHashMap<>();
+        paths = new ArrayList<>();
         initPaint();
     }
 
     @Override
     protected void onDraw(android.graphics.Canvas canvas) {
         super.onDraw(canvas);
-        for (Entry<Path, Paint> e : paths.entrySet()) {
-            canvas.drawPath(e.getKey(), e.getValue());// draws the path with the paint
+        for (Pair<Path, Paint> p : paths) {
+            canvas.drawPath(p.first, p.second);// draws the path with the paint
         }
         canvas.drawPath(path, paint);
     }
@@ -53,16 +53,15 @@ public class Canvas extends View implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        mGestureDetector.onTouchEvent(event);
-        return false; // let the event go to the rest of the listeners
+        return mGestureDetector.onTouchEvent(event); // let the event go to the rest of the listeners
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
+        Toast.makeText(getContext(), "123123", Toast.LENGTH_SHORT).show();
+
         Paint tempPaint = new Paint(paint);
-        lastStoredPath = new Path(path);
-        //paths.put(lastStoredPath, tempPaint);
 
         float eventX = event.getX();
         float eventY = event.getY();
@@ -74,7 +73,7 @@ public class Canvas extends View implements View.OnTouchListener {
                 path.lineTo(eventX, eventY);// makes a line to the point each time this event is fired
                 break;
             case MotionEvent.ACTION_UP:// when you lift your finger
-                paths.put(path, tempPaint);
+                paths.add(new Pair<>(path, tempPaint));
                 path = new Path();
                 performClick();
                 break;
@@ -109,14 +108,14 @@ public class Canvas extends View implements View.OnTouchListener {
 
     public void reset() {
         setBackgroundColor(Color.WHITE);
-        paint = new Paint();
-        path = new Path();
-        paths.clear();
         initPaint();
+        paths.clear();
     }
 
     public void undo() {
-        paths.remove(path);
+        // TODO adicionar a ultima posicao ao redo
+        //paths.remove(paths.size()-2);
+        Log.i("PATHS", paths.toString());
     }
 
     private void initPaint() {

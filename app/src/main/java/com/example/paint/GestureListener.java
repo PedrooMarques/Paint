@@ -31,6 +31,6 @@ public class GestureListener extends GestureDetector.SimpleOnGestureListener
     @Override
     public boolean onDoubleTap(MotionEvent motionEvent) {
         canvas.undo();
-        return false;
+        return true;
     }
 }
