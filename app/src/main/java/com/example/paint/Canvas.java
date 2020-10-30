@@ -9,21 +9,20 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 public class Canvas extends View implements View.OnTouchListener {
 
-    private ArrayList<Path> paths;
+    private HashMap<Path, Paint> paths = new HashMap<>();
 
-    private Paint paint;
-    private Path path;
+    private Paint paint = new Paint();
+    private Path path = new Path();
     private GestureDetector mGestureDetector;
 
     public Canvas(Context context, AttributeSet attrs) {
         super(context, attrs);
         setOnTouchListener(this);
-        paint = new Paint();
-        path = new Path();
         initPaint();
     }
 
@@ -31,14 +30,14 @@ public class Canvas extends View implements View.OnTouchListener {
         super(context, attrs);
         this.mGestureDetector = gestureDetector;
         setOnTouchListener(this);
-        paint = new Paint();
-        path = new Path();
         initPaint();
     }
 
     @Override
     protected void onDraw(android.graphics.Canvas canvas) {
-        canvas.drawPath(path, paint);// draws the path with the paint
+        for (Entry e : paths.entrySet()) {
+            canvas.drawPath((Path) e.getKey(), (Paint) e.getValue());// draws the path with the paint
+        }
     }
 
     @Override
@@ -54,6 +53,10 @@ public class Canvas extends View implements View.OnTouchListener {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
+        Paint tempPaint = new Paint(paint);
+        paths.put(path, tempPaint);
+
         float eventX = event.getX();
         float eventY = event.getY();
         switch (event.getAction()) {
@@ -64,6 +67,7 @@ public class Canvas extends View implements View.OnTouchListener {
                 path.lineTo(eventX, eventY);// makes a line to the point each time this event is fired
                 break;
             case MotionEvent.ACTION_UP:// when you lift your finger
+                path = new Path();
                 performClick();
                 break;
             default:
@@ -97,11 +101,14 @@ public class Canvas extends View implements View.OnTouchListener {
 
     public void reset() {
         setBackgroundColor(Color.WHITE);
-        path.reset();
+        paint = new Paint();
+        path = new Path();
+        paths.clear();
         initPaint();
     }
 
     public void undo() {
+        path.rewind();
     }
 
     private void initPaint() {
