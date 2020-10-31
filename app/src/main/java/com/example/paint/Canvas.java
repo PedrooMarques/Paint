@@ -53,13 +53,14 @@ public class Canvas extends View implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        return mGestureDetector.onTouchEvent(event); // let the event go to the rest of the listeners
+        mGestureDetector.onTouchEvent(event);
+        // TODO aqui precisa de retornar true para nao ir para o touchevent mas o gesture listener retorna sempre false...
+        // TODO ele so retorna true depois do segundo clique, o seja dois false e um true. e no long press nem isso mas e normal
+        return false; // let the event go to the rest of the listeners
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
-        Toast.makeText(getContext(), "123123", Toast.LENGTH_SHORT).show();
 
         Paint tempPaint = new Paint(paint);
 
@@ -113,9 +114,14 @@ public class Canvas extends View implements View.OnTouchListener {
     }
 
     public void undo() {
+        Log.d("PATHS", (paths.toString()));
         // TODO adicionar a ultima posicao ao redo
-        //paths.remove(paths.size()-2);
-        Log.i("PATHS", paths.toString());
+
+        if (paths.isEmpty())
+            Toast.makeText(getContext(), "Nothing to undo", Toast.LENGTH_SHORT).show();
+        else {
+            paths.remove(paths.size() - 2);
+        }
     }
 
     private void initPaint() {
