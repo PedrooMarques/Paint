@@ -7,7 +7,6 @@ import android.graphics.Path;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Pair;
@@ -24,9 +23,10 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
 
     private Paint paint = new Paint();
     private Path path = new Path();
+
     private GestureDetector mGestureDetector;
 
-    private static final float SHAKE_THRESHOLD_GRAVITY = 1.2F;
+    private static final float ACCELERATION_THRESHOLD = 10F;
     private static final int SHAKE_SLOP_TIME_MS = 1000;
     private long mShakeTimestamp;
 
@@ -152,13 +152,11 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
         float y = event.values[1];
         float z = event.values[2];
 
-        float gX = x / SensorManager.GRAVITY_EARTH;
-        float gY = y / SensorManager.GRAVITY_EARTH;
-        float gZ = z / SensorManager.GRAVITY_EARTH;
-
         // gForce will be close to 1 when there is no movement.
-        float gForce = (float) Math.sqrt(gX * gX + gY * gY + gZ * gZ);
-        if (gForce > SHAKE_THRESHOLD_GRAVITY) {
+        float accelMagnitude = (float) Math.sqrt(Math.pow(x, 2) +
+                Math.pow(y, 2) + Math.pow(z, 2));
+
+        if (accelMagnitude > ACCELERATION_THRESHOLD) {
             final long now = System.currentTimeMillis();
             // ignore shake events too close to each other (500ms)
             if (mShakeTimestamp + SHAKE_SLOP_TIME_MS > now) {
