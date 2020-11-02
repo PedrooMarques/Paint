@@ -91,12 +91,12 @@ public class CanvasFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        sensorManager.registerListener(paintCanvas.sensorEventListener, mLAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(paintCanvas, mLAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        sensorManager.unregisterListener(paintCanvas.sensorEventListener);
+        sensorManager.unregisterListener(paintCanvas);
     }
 }

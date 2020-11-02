@@ -18,13 +18,17 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class Canvas extends View implements View.OnTouchListener {
+public class Canvas extends View implements View.OnTouchListener, SensorEventListener {
 
     private ArrayList<Pair<Path, Paint>> paths;
 
     private Paint paint = new Paint();
     private Path path = new Path();
     private GestureDetector mGestureDetector;
+
+    private static final float SHAKE_THRESHOLD_GRAVITY = 1.2F;
+    private static final int SHAKE_SLOP_TIME_MS = 1000;
+    private long mShakeTimestamp;
 
     public Canvas(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -136,46 +140,40 @@ public class Canvas extends View implements View.OnTouchListener {
         paint.setStrokeJoin(Paint.Join.ROUND);
     }
 
-    private static final float SHAKE_THRESHOLD_GRAVITY = 1.2F;
-    private static final int SHAKE_SLOP_TIME_MS = 1000;
-    // sensor event listener
-    public final SensorEventListener sensorEventListener = new SensorEventListener() {
+    // sensor methods
 
-        private long mShakeTimestamp;
+    @Override
+    public void onSensorChanged(SensorEvent event) {
 
-        @Override
-        public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() != Sensor.TYPE_LINEAR_ACCELERATION)
+            return;
 
-            if (event.sensor.getType() != Sensor.TYPE_LINEAR_ACCELERATION)
+        float x = event.values[0];
+        float y = event.values[1];
+        float z = event.values[2];
+
+        float gX = x / SensorManager.GRAVITY_EARTH;
+        float gY = y / SensorManager.GRAVITY_EARTH;
+        float gZ = z / SensorManager.GRAVITY_EARTH;
+
+        // gForce will be close to 1 when there is no movement.
+        float gForce = (float) Math.sqrt(gX * gX + gY * gY + gZ * gZ);
+        if (gForce > SHAKE_THRESHOLD_GRAVITY) {
+            final long now = System.currentTimeMillis();
+            // ignore shake events too close to each other (500ms)
+            if (mShakeTimestamp + SHAKE_SLOP_TIME_MS > now) {
                 return;
-
-            float x = event.values[0];
-            float y = event.values[1];
-            float z = event.values[2];
-
-            float gX = x / SensorManager.GRAVITY_EARTH;
-            float gY = y / SensorManager.GRAVITY_EARTH;
-            float gZ = z / SensorManager.GRAVITY_EARTH;
-
-            // gForce will be close to 1 when there is no movement.
-            float gForce = (float) Math.sqrt(gX * gX + gY * gY + gZ * gZ);
-            if (gForce > SHAKE_THRESHOLD_GRAVITY) {
-                final long now = System.currentTimeMillis();
-                // ignore shake events too close to each other (500ms)
-                if (mShakeTimestamp + SHAKE_SLOP_TIME_MS > now) {
-                    return;
-                }
-
-                mShakeTimestamp = now;
-                reset();
-                //TODO isto e uma merda e da reset quando se clica nao quando da shake...
             }
-        }
 
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
+            mShakeTimestamp = now;
+            reset();
+            invalidate();
         }
-    };
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
 
 }
