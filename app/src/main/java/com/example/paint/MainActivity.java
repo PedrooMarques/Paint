@@ -26,8 +26,6 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout drawer;
 
-    public int defaultValue = 0;
-
     private SharedPreferences sharedPref;
 
     @Override

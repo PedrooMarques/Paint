@@ -7,6 +7,7 @@ import android.graphics.Path;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Pair;
@@ -14,6 +15,8 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
 
 import java.util.ArrayList;
 
@@ -26,6 +29,7 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
 
     private GestureDetector mGestureDetector;
 
+    // motion sensor
     private static final float ACCELERATION_THRESHOLD = 10F;
     private static final int SHAKE_SLOP_TIME_MS = 1000;
     private long mShakeTimestamp;
@@ -141,31 +145,37 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
     }
 
     // sensor methods
-
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onSensorChanged(SensorEvent event) {
 
-        if (event.sensor.getType() != Sensor.TYPE_LINEAR_ACCELERATION)
-            return;
+        if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
+            float x = event.values[0];
+            float y = event.values[1];
+            float z = event.values[2];
 
-        float x = event.values[0];
-        float y = event.values[1];
-        float z = event.values[2];
+            // gForce will be close to 1 when there is no movement.
+            float accelMagnitude = (float) Math.sqrt(Math.pow(x, 2) +
+                    Math.pow(y, 2) + Math.pow(z, 2));
 
-        // gForce will be close to 1 when there is no movement.
-        float accelMagnitude = (float) Math.sqrt(Math.pow(x, 2) +
-                Math.pow(y, 2) + Math.pow(z, 2));
+            if (accelMagnitude > ACCELERATION_THRESHOLD) {
+                final long now = System.currentTimeMillis();
+                // ignore shake events too close to each other (500ms)
+                if (mShakeTimestamp + SHAKE_SLOP_TIME_MS > now) {
+                    return;
+                }
 
-        if (accelMagnitude > ACCELERATION_THRESHOLD) {
-            final long now = System.currentTimeMillis();
-            // ignore shake events too close to each other (500ms)
-            if (mShakeTimestamp + SHAKE_SLOP_TIME_MS > now) {
-                return;
+                mShakeTimestamp = now;
+                reset();
+                invalidate();
             }
+        }
 
-            mShakeTimestamp = now;
-            reset();
-            invalidate();
+        if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
+
+            Toast.makeText(getContext(), "qsdqwsd", Toast.LENGTH_SHORT).show();
+
+
         }
     }
 
