@@ -14,7 +14,6 @@ import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,7 +29,6 @@ import com.example.paint.ui.palette.PaletteViewModel;
 
 public class CanvasFragment extends Fragment {
 
-    private static final int PERMISSION_REQUEST_CODE = 1;
     private SensorManager sensorManager;
     private Sensor mLAccelerometer;
     private Sensor mLightSensor;
@@ -51,24 +49,7 @@ public class CanvasFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if (!Settings.System.canWrite(getContext())) {
-            // If has permission then show an alert dialog with message.
-            AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
-            alertDialog.setMessage("You have system write settings permission now.");
-            alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "ALLOW", (dialog, which) -> {
-                // If do not have write settings permission then open the Can modify system settings panel.
-                Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
-                startActivity(intent);
-            });
-            alertDialog.show();
-        } else {
-            Toast.makeText(getContext(), "Permission to write on system settings granted", Toast.LENGTH_SHORT).show();
-        }
-
-        // change brightness mode to manual
-        Settings.System.putInt(getContext().getContentResolver(),
-                Settings.System.SCREEN_BRIGHTNESS_MODE,
-                Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+        requestWriteSettingsPermission();
 
         // view models
         mCanvasViewModel = new ViewModelProvider(this).get(CanvasViewModel.class);
@@ -116,6 +97,29 @@ public class CanvasFragment extends Fragment {
         mPaletteSharedViewModel.getBrushColor().observe(getViewLifecycleOwner(), paintCanvas::setBrushColor);
 
         mCanvasViewModel.getCanvasColor().observe(getViewLifecycleOwner(), paintCanvas::setCanvasColor);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void requestWriteSettingsPermission() {
+        if (!Settings.System.canWrite(getContext())) {
+            // If has permission then show an alert dialog with message.
+            AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+            alertDialog.setTitle("PERMISSION REQUIRED");
+            alertDialog.setMessage("This app requires permission to write on the system settings" +
+                    " to change the brightness of the screen according to the daylight");
+            alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "ALLOW", (dialog, which) ->
+                    startGrantPermissionActivity());
+            alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "CANCEL", (dialog, which) ->
+                    requireActivity().finish());
+            alertDialog.show();
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void startGrantPermissionActivity() {
+        // If do not have write settings permission then open the Can modify system settings panel.
+        Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+        startActivity(intent);
     }
 
     @Override

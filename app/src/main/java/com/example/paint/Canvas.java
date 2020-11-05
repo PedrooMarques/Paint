@@ -7,6 +7,7 @@ import android.graphics.Path;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.os.Build;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -15,6 +16,8 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
 
 import java.util.ArrayList;
 
@@ -143,6 +146,7 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
     }
 
     // sensor methods
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onSensorChanged(SensorEvent event) {
 
@@ -169,6 +173,12 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
         }
 
         if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
+            // if the write_settings permission was granted
+
+            // change brightness mode to manual
+            Settings.System.putInt(getContext().getContentResolver(),
+                    Settings.System.SCREEN_BRIGHTNESS_MODE,
+                    Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
 
             float lSensorValue = event.values[0];
             float lSensorValueMaxValue = event.sensor.getMaximumRange();
@@ -176,7 +186,6 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
             int brightness = (int) (255 - (lSensorValue * (255 / lSensorValueMaxValue)));
 
             Settings.System.putInt(getContext().getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, brightness);
-
         }
     }
 
