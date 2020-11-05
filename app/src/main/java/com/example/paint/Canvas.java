@@ -170,11 +170,6 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
 
         if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
 
-            // change brightness mode to manual
-            Settings.System.putInt(getContext().getContentResolver(),
-                    Settings.System.SCREEN_BRIGHTNESS_MODE,
-                    Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
-
             float lSensorValue = event.values[0];
             float lSensorValueMaxValue = event.sensor.getMaximumRange();
 
