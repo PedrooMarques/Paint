@@ -14,10 +14,11 @@ public class CanvasViewModel extends ViewModel {
     // Live data instances
 
     // Tracks the canvas color in sharedPrefs
-    private MutableLiveData<Integer> canvasColor;
+    private final MutableLiveData<Integer> canvasColor;
 
     // tracks the existing paths to draw
     private MutableLiveData<ArrayList<Pair<Path, Paint>>> paths;
+    //TODO
 
     public CanvasViewModel() {
         canvasColor = new MutableLiveData<>();

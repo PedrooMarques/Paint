@@ -70,6 +70,7 @@
         android:text="@string/alert_dialog_dismiss"
         app:layout_constraintBottom_toBottomOf="@+id/resetButton"
         app:layout_constraintEnd_toEndOf="@+id/brushSizeSlider"
-        app:layout_constraintTop_toTopOf="@+id/resetButton" />
+        app:layout_constraintTop_toTopOf="@+id/resetButton"
+        tools:ignore="InconsistentLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

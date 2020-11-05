@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">Paint</string>
-    <string name="splash_screen_text">Paint</string>
-    <string name="top_bar_image">topBarImage</string>
 
     <!-- SettingsActivity Preferences -->
     <string name="title_activity_settings">Settings</string>
@@ -13,13 +11,7 @@
     <string name="background_color_title">Background Color</string>
     <string name="preference_title_description">Change Background Color</string>
 
-    <!-- Color picker -->
-    <string name="confirm">Ok</string>
-    <string name="cancel">Cancel</string>
-
     <string name="title_activity_main">MainActivity</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Paint</string>
     <string name="nav_header_subtitle">Grupo 17</string>
     <string name="nav_header_desc">Navigation header</string>
@@ -33,7 +25,6 @@
     <!-- AboutActivity Preferences -->
     <string name="title_activity_about">About</string>
     <string name="group_number">Grupo 17</string>
-    <string name="about_text_view">About</string>
     <string name="pedroMarquesTextView">Pedro Marques 47340</string>
     <string name="pedroAlmeidaTextView">Pedro Almeida 46401</string>
     <string name="inesLoboTextView">Inês Lobo 49022</string>
@@ -44,7 +35,6 @@
     <string name="preference_file_key">com.example.paint.PREFERENCE_FILE_KEY</string>
 
     <!-- Palette Fragment -->
-    <string name="palettefragment">PaletteFragment</string>
     <string name="platte_dialogfragment_button">Platte DialogFragment Button</string>
     <string name="alert_dialog_apply">Apply</string>
     <string name="alert_dialog_reset">Reset</string>

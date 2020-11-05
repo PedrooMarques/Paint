@@ -97,9 +97,7 @@ public class PaletteFragment extends DialogFragment {
             // for the brush size which then hasn't been added to the view model
         else brushSizeSlider.setProgress(20);
 
-        colorPickerView.subscribe((color, fromUser, shouldPropagate) -> {
-            tempBrushColor = color;
-        });
+        colorPickerView.subscribe((color, fromUser, shouldPropagate) -> tempBrushColor = color);
 
         resetButton.setOnClickListener(v -> {
             brushSizeSlider.setProgress(Objects.requireNonNull(mViewModel.getBrushSize().getValue()).intValue());
@@ -115,9 +113,7 @@ public class PaletteFragment extends DialogFragment {
         });
 
         if (dismissButton != null) {
-            dismissButton.setOnClickListener(v -> {
-                d.dismiss();
-            });
+            dismissButton.setOnClickListener(v -> d.dismiss());
         }
     }
 

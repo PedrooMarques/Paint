@@ -8,10 +8,10 @@ public class PaletteViewModel extends ViewModel {
     // Live data instances
 
     // Tracks the brush color
-    private MutableLiveData<Integer> brushColor;
+    private final MutableLiveData<Integer> brushColor;
 
     // Tracks the brush color
-    private MutableLiveData<Float> brushSize;
+    private final MutableLiveData<Float> brushSize;
 
     public PaletteViewModel() {
         brushColor = new MutableLiveData<>();

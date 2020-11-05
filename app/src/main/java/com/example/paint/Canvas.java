@@ -23,9 +23,9 @@ import java.util.ArrayList;
 
 public class Canvas extends View implements View.OnTouchListener, SensorEventListener {
 
-    private ArrayList<Pair<Path, Paint>> paths;
+    private final ArrayList<Pair<Path, Paint>> paths;
 
-    private Paint paint = new Paint();
+    private final Paint paint = new Paint();
     private Path path = new Path();
 
     private GestureDetector mGestureDetector;
