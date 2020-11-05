@@ -30,6 +30,9 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
 
     private GestureDetector mGestureDetector;
 
+    private float initialX;
+    private float initialY;
+
     // motion sensor
     private static final float ACCELERATION_THRESHOLD = 10F;
     private static final int SHAKE_SLOP_TIME_MS = 1000;
@@ -67,8 +70,6 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         mGestureDetector.onTouchEvent(event);
-        // TODO aqui precisa de retornar true para nao ir para o touchevent mas o gesture listener retorna sempre false...
-        // TODO ele so retorna true depois do segundo clique, o seja dois false e um true. e no long press nem isso mas e normal
         return false; // let the event go to the rest of the listeners
     }
 
@@ -79,16 +80,24 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
 
         float eventX = event.getX();
         float eventY = event.getY();
+
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                path.moveTo(eventX, eventY);// updates the path initial point
+                // updates the path initial point
+                path.moveTo(eventX, eventY);
+                initialX = eventX;
+                initialY = eventY;
                 return true;
             case MotionEvent.ACTION_MOVE:
-                path.lineTo(eventX, eventY);// makes a line to the point each time this event is fired
+                // makes a line to the point each time this event is fired
+                path.lineTo(eventX, eventY);
                 break;
             case MotionEvent.ACTION_UP:// when you lift your finger
-                paths.add(new Pair<>(path, tempPaint));
-                path = new Path();
+                // if the position of the click changed (if the user drew) add the path to the list
+                if (initialX != eventX && initialY != eventY) {
+                    paths.add(new Pair<>(path, tempPaint));
+                    path = new Path();
+                }
                 performClick();
                 break;
             default:
@@ -133,7 +142,7 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
         if (paths.isEmpty())
             Toast.makeText(getContext(), "Nothing to undo", Toast.LENGTH_SHORT).show();
         else {
-            paths.remove(paths.size() - 2);
+            paths.remove(paths.size() - 1);
         }
     }
 

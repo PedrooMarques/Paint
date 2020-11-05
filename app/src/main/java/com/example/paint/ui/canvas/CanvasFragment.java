@@ -33,9 +33,6 @@ public class CanvasFragment extends Fragment {
     private Sensor mLAccelerometer;
     private Sensor mLightSensor;
 
-    private CanvasViewModel mCanvasViewModel;
-    private PaletteViewModel mPaletteSharedViewModel;
-
     private Canvas paintCanvas;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -52,8 +49,8 @@ public class CanvasFragment extends Fragment {
         requestWriteSettingsPermission();
 
         // view models
-        mCanvasViewModel = new ViewModelProvider(this).get(CanvasViewModel.class);
-        mPaletteSharedViewModel = new ViewModelProvider(requireActivity()).get(PaletteViewModel.class);
+        CanvasViewModel mCanvasViewModel = new ViewModelProvider(this).get(CanvasViewModel.class);
+        PaletteViewModel mPaletteSharedViewModel = new ViewModelProvider(requireActivity()).get(PaletteViewModel.class);
 
         // sensors + manager
         sensorManager = (SensorManager) requireActivity().getSystemService(Context.SENSOR_SERVICE);
