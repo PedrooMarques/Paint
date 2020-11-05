@@ -1,24 +1,17 @@
 package com.example.paint.ui.canvas;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -40,23 +33,8 @@ public class CanvasFragment extends Fragment {
 
     private Canvas paintCanvas;
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-
-        if (!Settings.System.canWrite(getContext())) {
-            // If has permission then show an alert dialog with message.
-            AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
-            alertDialog.setMessage("You have system write settings permission now.");
-            alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "ALLOW", (dialog, which) -> {
-                // If do not have write settings permission then open the Can modify system settings panel.
-                Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
-                startActivity(intent);
-            });
-            alertDialog.show();
-        } else {
-            Toast.makeText(getContext(), "Permission to write on system settings granted", Toast.LENGTH_SHORT).show();
-        }
 
         return inflater.inflate(R.layout.fragment_canvas, container, false);
     }
