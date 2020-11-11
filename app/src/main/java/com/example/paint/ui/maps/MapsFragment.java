@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,6 +40,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     private GoogleMap mMap;
     private MapView mapView;
 
+    private Button drawButton;
+
+    private boolean drawState;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_maps, container, false);
@@ -51,6 +56,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         mapView = view.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
+
+        drawButton = view.findViewById(R.id.drawingButton);
+        drawState = false;
 
         // Check if the permissions are granted
         // if not, request permission
@@ -72,6 +80,16 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
             //get instant location
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 1, locationListener);
+
+            drawButton.setOnClickListener(v -> {
+                if (!drawState) {
+                    drawState = true;
+                    drawButton.setText("STOP DRAWING");
+                } else {
+                    drawState = false;
+                    drawButton.setText("START DRAWING");
+                }
+            });
 
 //            mapCanvas = new MapCanvas(getContext(), null, userLocation);
 //            // define Canvas as layout view
@@ -169,4 +187,5 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(positionLatLng, 15), 2000, null);
         }
     }
+
 }
