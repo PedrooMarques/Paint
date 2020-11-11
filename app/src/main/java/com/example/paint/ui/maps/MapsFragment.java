@@ -65,6 +65,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                     userLocation = new Location(location);
                 else userLocation.set(location);
                 Log.i("LOCATION", location.toString());
+                LatLng positionLatLng = new LatLng(userLocation.getLatitude(), userLocation.getLongitude());
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(positionLatLng));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(positionLatLng, 15), 2000, null);
             };
 
             //get instant location
@@ -155,12 +158,15 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
-        //LatLng positionLatLng = new LatLng(userLocation.getLatitude(), userLocation.getLongitude());
-        LatLng positionLatLng = new LatLng(122, 122);
+        LatLng positionLatLng;
 
-        mMap.addMarker(new MarkerOptions()
-                .position(positionLatLng)
-                .title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(positionLatLng));
+        if (userLocation != null) {
+            positionLatLng = new LatLng(userLocation.getLatitude(), userLocation.getLongitude());
+            mMap.addMarker(new MarkerOptions()
+                    .position(positionLatLng)
+                    .title("You are here"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(positionLatLng));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(positionLatLng, 15), 2000, null);
+        }
     }
 }
