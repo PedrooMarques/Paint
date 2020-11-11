@@ -46,8 +46,6 @@ public class CanvasFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        requestWriteSettingsPermission();
-
         // view models
         CanvasViewModel mCanvasViewModel = new ViewModelProvider(this).get(CanvasViewModel.class);
         PaletteViewModel mPaletteSharedViewModel = new ViewModelProvider(requireActivity()).get(PaletteViewModel.class);
@@ -72,28 +70,32 @@ public class CanvasFragment extends Fragment {
 
         mCanvasViewModel.setCanvasColor(selectedColor);
 
-        // create new Canvas custom view
-        paintCanvas = new Canvas(getContext(), null, mGestureDetector);
-        paintCanvas.setBackgroundColor(selectedColor);
+        requestWriteSettingsPermission();
 
-        if (mPaletteSharedViewModel.getBrushSize().getValue() != null)
-            paintCanvas.setBrushSize(mPaletteSharedViewModel.getBrushSize().getValue());
-        if (mPaletteSharedViewModel.getBrushColor().getValue() != null)
-            paintCanvas.setBrushColor(mPaletteSharedViewModel.getBrushColor().getValue());
+        if (Settings.System.canWrite(getContext())) {
+            // create new Canvas custom view
+            paintCanvas = new Canvas(getContext(), null, mGestureDetector);
+            paintCanvas.setBackgroundColor(selectedColor);
 
-        mGestureListener.setCanvas(paintCanvas);
+            if (mPaletteSharedViewModel.getBrushSize().getValue() != null)
+                paintCanvas.setBrushSize(mPaletteSharedViewModel.getBrushSize().getValue());
+            if (mPaletteSharedViewModel.getBrushColor().getValue() != null)
+                paintCanvas.setBrushColor(mPaletteSharedViewModel.getBrushColor().getValue());
 
-        // define Canvas as layout view
-        ConstraintLayout layout = view.findViewById(R.id.fragmentCanvasConstraintLayout);
-        layout.addView(paintCanvas);
+            mGestureListener.setCanvas(paintCanvas);
 
-        mPaletteSharedViewModel.setBrushColor(paintCanvas.getBrushColor());
-        mPaletteSharedViewModel.setBrushSize(paintCanvas.getBrushSize());
+            // define Canvas as layout view
+            ConstraintLayout layout = view.findViewById(R.id.fragmentCanvasConstraintLayout);
+            layout.addView(paintCanvas);
 
-        mPaletteSharedViewModel.getBrushSize().observe(getViewLifecycleOwner(), paintCanvas::setBrushSize);
-        mPaletteSharedViewModel.getBrushColor().observe(getViewLifecycleOwner(), paintCanvas::setBrushColor);
+            mPaletteSharedViewModel.setBrushColor(paintCanvas.getBrushColor());
+            mPaletteSharedViewModel.setBrushSize(paintCanvas.getBrushSize());
 
-        mCanvasViewModel.getCanvasColor().observe(getViewLifecycleOwner(), paintCanvas::setCanvasColor);
+            mPaletteSharedViewModel.getBrushSize().observe(getViewLifecycleOwner(), paintCanvas::setBrushSize);
+            mPaletteSharedViewModel.getBrushColor().observe(getViewLifecycleOwner(), paintCanvas::setBrushColor);
+
+            mCanvasViewModel.getCanvasColor().observe(getViewLifecycleOwner(), paintCanvas::setCanvasColor);
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)

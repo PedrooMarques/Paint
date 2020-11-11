@@ -12,10 +12,10 @@
         tools:layout="@layout/fragment_canvas" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.example.paint.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:id="@+id/nav_maps"
+        android:name="com.example.paint.ui.maps.MapsFragment"
+        android:label="@string/menu_maps"
+        tools:layout="@layout/fragment_maps" />
 
     <fragment
         android:id="@+id/nav_slideshow"
