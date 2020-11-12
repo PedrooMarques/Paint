@@ -7,7 +7,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,10 +27,17 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
-public class MapsFragment extends Fragment implements OnMapReadyCallback {
+import java.util.ArrayList;
 
-    private GalleryViewModel galleryViewModel;
+public class MapsFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnPolylineClickListener,
+        GoogleMap.OnPolygonClickListener {
+
+    private Polyline path;
+    private ArrayList<LatLng> paths = new ArrayList<>();
 
     MapCanvas mapCanvas;
     private LocationManager locationManager;
@@ -72,10 +78,16 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                 if (userLocation == null)
                     userLocation = new Location(location);
                 else userLocation.set(location);
-                Log.i("LOCATION", location.toString());
+
                 LatLng positionLatLng = new LatLng(userLocation.getLatitude(), userLocation.getLongitude());
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(positionLatLng));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(positionLatLng, 15), 2000, null);
+
+                if (drawState) {
+                    paths.add(positionLatLng);
+                    path = mMap.addPolyline(new PolylineOptions()
+                            .clickable(true).addAll(paths));
+                }
             };
 
             //get instant location
@@ -186,6 +198,20 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             mMap.moveCamera(CameraUpdateFactory.newLatLng(positionLatLng));
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(positionLatLng, 15), 2000, null);
         }
+
+        // Set listeners for click events.
+        // NOT USED
+        googleMap.setOnPolylineClickListener(this);
+        googleMap.setOnPolygonClickListener(this);
     }
 
+    @Override
+    public void onPolygonClick(Polygon polygon) {
+
+    }
+
+    @Override
+    public void onPolylineClick(Polyline polyline) {
+
+    }
 }
