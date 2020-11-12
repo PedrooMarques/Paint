@@ -38,7 +38,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
     private Polyline path;
     private ArrayList<LatLng> paths = new ArrayList<>();
 
-    MapCanvas mapCanvas;
     private LocationManager locationManager;
     private LocationListener locationListener;
     private Location userLocation;
