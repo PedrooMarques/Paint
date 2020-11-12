@@ -19,7 +19,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import com.example.paint.MapCanvas;
 import com.example.paint.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -102,11 +101,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                     drawButton.setText("START DRAWING");
                 }
             });
-
-//            mapCanvas = new MapCanvas(getContext(), null, userLocation);
-//            // define Canvas as layout view
-//            ConstraintLayout layout = view.findViewById(R.id.mapsLayout);
-//            layout.addView(mapCanvas);
         }
     }
 
