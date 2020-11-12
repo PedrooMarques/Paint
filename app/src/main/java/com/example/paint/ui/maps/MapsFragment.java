@@ -35,8 +35,8 @@ import java.util.ArrayList;
 public class MapsFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnPolylineClickListener,
         GoogleMap.OnPolygonClickListener {
 
-    private ArrayList<LatLng> path;
-    private ArrayList<LatLng> polylines = new ArrayList<>();
+    private ArrayList<LatLng> path = new ArrayList<>();
+    private ArrayList<Polyline> polylines = new ArrayList<>();
 
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -83,8 +83,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
 
                 if (drawState) {
                     path.add(positionLatLng);
-                    mMap.addPolyline(new PolylineOptions()
-                            .clickable(true).addAll(path));
+                    polylines.add(mMap.addPolyline(new PolylineOptions()
+                            .clickable(true).addAll(path)));
                 }
             };
 
@@ -95,15 +95,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 if (!drawState) {
                     drawState = true;
                     drawButton.setText("STOP DRAWING");
-                    path = new ArrayList<>();
-                    if (!polylines.isEmpty()) {
-                        mMap.addPolyline(new PolylineOptions()
-                                .clickable(true).addAll(polylines));
-                    }
                 } else {
                     drawState = false;
                     drawButton.setText("START DRAWING");
-                    polylines.addAll(path);
+                    path = new ArrayList<>();
                 }
             });
         }
