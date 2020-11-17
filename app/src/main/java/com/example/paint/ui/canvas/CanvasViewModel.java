@@ -17,11 +17,11 @@ public class CanvasViewModel extends ViewModel {
     private final MutableLiveData<Integer> canvasColor;
 
     // tracks the existing paths to draw
-    private MutableLiveData<ArrayList<Pair<Path, Paint>>> paths;
-    //TODO
+    private final MutableLiveData<ArrayList<Pair<Path, Paint>>> paths;
 
     public CanvasViewModel() {
         canvasColor = new MutableLiveData<>();
+        paths = new MutableLiveData<>();
     }
 
     public MutableLiveData<Integer> getCanvasColor() {
@@ -30,5 +30,13 @@ public class CanvasViewModel extends ViewModel {
 
     public void setCanvasColor(int value) {
         this.canvasColor.setValue(value);
+    }
+
+    public MutableLiveData<ArrayList<Pair<Path, Paint>>> getPaths() {
+        return paths;
+    }
+
+    public void setPaths(ArrayList<Pair<Path, Paint>> paths) {
+        this.paths.setValue(paths);
     }
 }

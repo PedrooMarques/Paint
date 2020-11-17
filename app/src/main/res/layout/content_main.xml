@@ -20,7 +20,7 @@
         app:navGraph="@navigation/mobile_navigation" />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/paletteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -31,10 +31,20 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/nav_host_fragment"
+        app:layout_constraintStart_toEndOf="@+id/saveButton"
         app:layout_constraintTop_toTopOf="@+id/nav_host_fragment"
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/ic_baseline_palette_24" />
 
-
+    <ImageButton
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@string/save_canvas_button"
+        android:onClick="saveCanvasDialog"
+        android:src="@android:drawable/ic_menu_save"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

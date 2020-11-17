@@ -17,16 +17,29 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
+
+import com.example.paint.ui.canvas.CanvasViewModel;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Canvas extends View implements View.OnTouchListener, SensorEventListener {
 
-    private final ArrayList<Pair<Path, Paint>> paths;
+    private static final String FIREBASE_TAG = "firebase_debug";
+
+    private static ArrayList<Pair<Path, Paint>> paths = null;
 
     private final Paint paint = new Paint();
     private Path path = new Path();
+
+    private CanvasViewModel canvasViewModel;
 
     private GestureDetector mGestureDetector;
 
@@ -45,9 +58,10 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
         initPaint();
     }
 
-    public Canvas(Context context, AttributeSet attrs, GestureDetector gestureDetector) {
+    public Canvas(Context context, AttributeSet attrs, GestureDetector gestureDetector, CanvasViewModel canvasViewModel) {
         super(context, attrs);
         this.mGestureDetector = gestureDetector;
+        this.canvasViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(CanvasViewModel.class);
         setOnTouchListener(this);
         paths = new ArrayList<>();
         initPaint();
@@ -73,6 +87,26 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
         return false; // let the event go to the rest of the listeners
     }
 
+    public static void saveCanvas() {
+
+        if (!paths.isEmpty()) {
+            Map<String, Object> pairs = new HashMap<>();
+            for (Pair<Path, Paint> p : paths) {
+                pairs.put(p.toString(), p);
+            }
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("canvas")
+                    .add(pairs)
+                    .addOnSuccessListener(documentReference -> Log.d(FIREBASE_TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w(FIREBASE_TAG, "Error adding document", e);
+                        }
+                    });
+        } else Log.d("PENIS", "asdasd");
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
@@ -96,6 +130,7 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
                 // if the position of the click changed (if the user drew) add the path to the list
                 if (initialX != eventX && initialY != eventY) {
                     paths.add(new Pair<>(path, tempPaint));
+                    canvasViewModel.setPaths(paths);
                     path = new Path();
                 }
                 performClick();
@@ -107,6 +142,10 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
         // Schedules a repaint.
         invalidate();
         return true;
+    }
+
+    public ArrayList<Pair<Path, Paint>> getPaths() {
+        return paths;
     }
 
     public void setBrushSize(float size) {
@@ -135,15 +174,8 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
         paths.clear();
     }
 
-    public void undo() {
-        Log.d("PATHS", (paths.toString()));
-        // TODO adicionar a ultima posicao ao redo
-
-        if (paths.isEmpty())
-            Toast.makeText(getContext(), "Nothing to undo", Toast.LENGTH_SHORT).show();
-        else {
-            paths.remove(paths.size() - 1);
-        }
+    public void setPaths(ArrayList<Pair<Path, Paint>> pairs) {
+        paths = new ArrayList<>(pairs);
     }
 
     private void initPaint() {
@@ -203,4 +235,14 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
 
     }
 
+    public void undo() {
+        // TODO adicionar a ultima posicao ao redo
+
+        if (paths.isEmpty())
+            Toast.makeText(getContext(), "Nothing to undo", Toast.LENGTH_SHORT).show();
+        else {
+            paths.remove(paths.size() - 1);
+            canvasViewModel.setPaths(paths);
+        }
+    }
 }

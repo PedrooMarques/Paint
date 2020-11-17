@@ -35,6 +35,9 @@ public class CanvasFragment extends Fragment {
 
     private Canvas paintCanvas;
 
+    // Access a Cloud Firestore instance from your Activity
+    //private FirebaseFirestore db;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -46,8 +49,9 @@ public class CanvasFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
         // view models
-        CanvasViewModel mCanvasViewModel = new ViewModelProvider(this).get(CanvasViewModel.class);
+        CanvasViewModel mCanvasViewModel = new ViewModelProvider(requireActivity()).get(CanvasViewModel.class);
         PaletteViewModel mPaletteSharedViewModel = new ViewModelProvider(requireActivity()).get(PaletteViewModel.class);
 
         // sensors + manager
@@ -74,13 +78,16 @@ public class CanvasFragment extends Fragment {
 
         if (Settings.System.canWrite(getContext())) {
             // create new Canvas custom view
-            paintCanvas = new Canvas(getContext(), null, mGestureDetector);
+            paintCanvas = new Canvas(getContext(), null, mGestureDetector, mCanvasViewModel);
             paintCanvas.setBackgroundColor(selectedColor);
 
             if (mPaletteSharedViewModel.getBrushSize().getValue() != null)
                 paintCanvas.setBrushSize(mPaletteSharedViewModel.getBrushSize().getValue());
             if (mPaletteSharedViewModel.getBrushColor().getValue() != null)
                 paintCanvas.setBrushColor(mPaletteSharedViewModel.getBrushColor().getValue());
+
+            if (mCanvasViewModel.getPaths().getValue() != null)
+                paintCanvas.setPaths(mCanvasViewModel.getPaths().getValue());
 
             mGestureListener.setCanvas(paintCanvas);
 
@@ -94,7 +101,10 @@ public class CanvasFragment extends Fragment {
             mPaletteSharedViewModel.getBrushSize().observe(getViewLifecycleOwner(), paintCanvas::setBrushSize);
             mPaletteSharedViewModel.getBrushColor().observe(getViewLifecycleOwner(), paintCanvas::setBrushColor);
 
+            mCanvasViewModel.setPaths(paintCanvas.getPaths());
+
             mCanvasViewModel.getCanvasColor().observe(getViewLifecycleOwner(), paintCanvas::setCanvasColor);
+            mCanvasViewModel.getPaths().observe(getViewLifecycleOwner(), paintCanvas::setPaths);
         }
     }
 
@@ -133,4 +143,5 @@ public class CanvasFragment extends Fragment {
         super.onPause();
         sensorManager.unregisterListener(paintCanvas);
     }
+
 }

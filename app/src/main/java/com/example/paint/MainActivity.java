@@ -1,5 +1,6 @@
 package com.example.paint;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,6 +23,8 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.paint.ui.palette.PaletteFragment;
 import com.google.android.material.navigation.NavigationView;
+
+import static com.example.paint.Canvas.saveCanvas;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -127,5 +130,22 @@ public class MainActivity extends AppCompatActivity {
         // Create the fragment and show it as a dialog.
         DialogFragment paletteDialogFragment = PaletteFragment.newInstance();
         paletteDialogFragment.show(getSupportFragmentManager(), "dialogFragment");
+    }
+
+    public void saveCanvasDialog(View view) {
+        // Create the fragment and show it as a dialog.
+        // Use the Builder class for convenient dialog construction
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Save this canvas?")
+                .setPositiveButton("SAVE", (dialog, id) -> {
+                    saveCanvas();
+                })
+                .setNegativeButton("CANCEL", (dialog, id) -> {
+                    // User cancelled the dialog
+                    dialog.dismiss();
+                });
+        // Create the AlertDialog object
+        builder.create();
+        builder.show();
     }
 }
