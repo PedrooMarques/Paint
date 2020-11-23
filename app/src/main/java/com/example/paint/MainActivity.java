@@ -24,6 +24,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.example.paint.ui.palette.PaletteFragment;
 import com.google.android.material.navigation.NavigationView;
 
+import static com.example.paint.ui.canvas.CanvasFragment.loadCanvas;
 import static com.example.paint.ui.canvas.CanvasFragment.saveCanvas;
 
 public class MainActivity extends AppCompatActivity {
@@ -137,8 +138,9 @@ public class MainActivity extends AppCompatActivity {
         // Create the fragment and show it as a dialog.
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Save this canvas?")
-                .setPositiveButton("SAVE", (dialog, id) -> saveCanvas())
+        builder.setMessage("Save this canvas? / Load previous canvas?");
+        builder.setPositiveButton("SAVE", (dialog, id) -> saveCanvas())
+                .setNeutralButton("LOAD", (dialog, id) -> loadCanvas())
                 .setNegativeButton("CANCEL", (dialog, id) -> {
                     // User cancelled the dialog
                     dialog.dismiss();
