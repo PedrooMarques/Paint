@@ -5,11 +5,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Paint;
+import android.graphics.Path;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
+import android.util.Pair;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +30,11 @@ import com.example.paint.Canvas;
 import com.example.paint.GestureListener;
 import com.example.paint.R;
 import com.example.paint.ui.palette.PaletteViewModel;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CanvasFragment extends Fragment {
 
@@ -35,13 +44,89 @@ public class CanvasFragment extends Fragment {
 
     private Canvas paintCanvas;
 
-    // Access a Cloud Firestore instance from your Activity
-    //private FirebaseFirestore db;
+    private static final String FIREBASE_TAG = "firebase_debug";
+
+    private static CanvasViewModel mCanvasViewModel;
+
+    private static ArrayList<Pair<Path, com.example.paint.Paint>> paths;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         return inflater.inflate(R.layout.fragment_canvas, container, false);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static boolean saveCanvas() {
+
+        final boolean[] response = {false};
+
+        paths = new ArrayList<>();
+
+        // foreach pair in the view models list of pairs
+        for (Pair<Path, Paint> item : mCanvasViewModel.getPaths().getValue()) {
+            // create a new list replacing the second item in the pair (Paint) with a custom paint
+            com.example.paint.Paint customPaint = new com.example.paint.Paint();
+            customPaint.setPaintColor(item.second.getColor());
+            customPaint.setPaintStyle(item.second.getStyle());
+            customPaint.setPaintStrokeWidth(item.second.getStrokeWidth());
+            customPaint.setPaintAntiAlias(item.second.isAntiAlias());
+            customPaint.setPaintStrokeJoin(item.second.getStrokeJoin());
+            paths.add(new Pair<>(item.first, customPaint));
+        }
+
+        if (!paths.isEmpty()) {
+            Map<String, Object> pairs = new HashMap<>();
+            for (Pair<Path, com.example.paint.Paint> p : paths) {
+                pairs.put(p.toString(), p);
+            }
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("canvas")
+                    .add(pairs)
+                    .addOnSuccessListener(documentReference -> {
+                        Log.d(FIREBASE_TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                        response[0] = true;
+                    })
+                    .addOnFailureListener(e -> Log.w(FIREBASE_TAG, "Error adding document", e));
+        }
+
+        return response[0];
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void requestWriteSettingsPermission() {
+        if (!Settings.System.canWrite(getContext())) {
+            // If has permission then show an alert dialog with message.
+            AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+            alertDialog.setTitle("PERMISSION REQUIRED");
+            alertDialog.setMessage("This app requires permission to write on the system settings" +
+                    " to change the brightness of the screen according to the daylight");
+            alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "ALLOW", (dialog, which) ->
+                    startGrantPermissionActivity());
+            alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "CANCEL", (dialog, which) ->
+                    requireActivity().finish());
+            alertDialog.show();
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void startGrantPermissionActivity() {
+        // If do not have write settings permission then open the Can modify system settings panel.
+        Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        sensorManager.registerListener(paintCanvas, mLAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(paintCanvas, mLightSensor, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(paintCanvas);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -51,7 +136,7 @@ public class CanvasFragment extends Fragment {
 
 
         // view models
-        CanvasViewModel mCanvasViewModel = new ViewModelProvider(requireActivity()).get(CanvasViewModel.class);
+        mCanvasViewModel = new ViewModelProvider(requireActivity()).get(CanvasViewModel.class);
         PaletteViewModel mPaletteSharedViewModel = new ViewModelProvider(requireActivity()).get(PaletteViewModel.class);
 
         // sensors + manager
@@ -106,42 +191,6 @@ public class CanvasFragment extends Fragment {
             mCanvasViewModel.getCanvasColor().observe(getViewLifecycleOwner(), paintCanvas::setCanvasColor);
             mCanvasViewModel.getPaths().observe(getViewLifecycleOwner(), paintCanvas::setPaths);
         }
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    private void requestWriteSettingsPermission() {
-        if (!Settings.System.canWrite(getContext())) {
-            // If has permission then show an alert dialog with message.
-            AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
-            alertDialog.setTitle("PERMISSION REQUIRED");
-            alertDialog.setMessage("This app requires permission to write on the system settings" +
-                    " to change the brightness of the screen according to the daylight");
-            alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "ALLOW", (dialog, which) ->
-                    startGrantPermissionActivity());
-            alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "CANCEL", (dialog, which) ->
-                    requireActivity().finish());
-            alertDialog.show();
-        }
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    private void startGrantPermissionActivity() {
-        // If do not have write settings permission then open the Can modify system settings panel.
-        Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
-        startActivity(intent);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        sensorManager.registerListener(paintCanvas, mLAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        sensorManager.registerListener(paintCanvas, mLightSensor, SensorManager.SENSOR_DELAY_NORMAL);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        sensorManager.unregisterListener(paintCanvas);
     }
 
 }

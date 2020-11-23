@@ -10,31 +10,23 @@ import android.hardware.SensorEventListener;
 import android.os.Build;
 import android.provider.Settings;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.Pair;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.example.paint.ui.canvas.CanvasViewModel;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Canvas extends View implements View.OnTouchListener, SensorEventListener {
 
-    private static final String FIREBASE_TAG = "firebase_debug";
-
-    private static ArrayList<Pair<Path, Paint>> paths = null;
+    private ArrayList<Pair<Path, Paint>> paths;
 
     private final Paint paint = new Paint();
     private Path path = new Path();
@@ -87,26 +79,6 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
         return false; // let the event go to the rest of the listeners
     }
 
-    public static void saveCanvas() {
-
-        if (!paths.isEmpty()) {
-            Map<String, Object> pairs = new HashMap<>();
-            for (Pair<Path, Paint> p : paths) {
-                pairs.put(p.toString(), p);
-            }
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collection("canvas")
-                    .add(pairs)
-                    .addOnSuccessListener(documentReference -> Log.d(FIREBASE_TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w(FIREBASE_TAG, "Error adding document", e);
-                        }
-                    });
-        } else Log.d("PENIS", "asdasd");
-    }
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
@@ -144,6 +116,10 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
         return true;
     }
 
+    public void setPaths(ArrayList<Pair<Path, Paint>> pairs) {
+        paths = new ArrayList<>(pairs);
+    }
+
     public ArrayList<Pair<Path, Paint>> getPaths() {
         return paths;
     }
@@ -172,10 +148,16 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
         setBackgroundColor(Color.WHITE);
         initPaint();
         paths.clear();
+        canvasViewModel.setPaths(paths);
     }
 
-    public void setPaths(ArrayList<Pair<Path, Paint>> pairs) {
-        paths = new ArrayList<>(pairs);
+    public void undo() {
+        if (paths.isEmpty())
+            Toast.makeText(getContext(), "Nothing to undo", Toast.LENGTH_SHORT).show();
+        else {
+            paths.remove(paths.size() - 1);
+            canvasViewModel.setPaths(paths);
+        }
     }
 
     private void initPaint() {
@@ -208,8 +190,11 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
                 }
 
                 mShakeTimestamp = now;
+                Toast.makeText(getContext(), "SHAKING", Toast.LENGTH_SHORT).show();
                 reset();
                 invalidate();
+
+                //TODO o shake funcion a mal so se rodarmos e que da shake
             }
         }
 
@@ -233,16 +218,5 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
-    }
-
-    public void undo() {
-        // TODO adicionar a ultima posicao ao redo
-
-        if (paths.isEmpty())
-            Toast.makeText(getContext(), "Nothing to undo", Toast.LENGTH_SHORT).show();
-        else {
-            paths.remove(paths.size() - 1);
-            canvasViewModel.setPaths(paths);
-        }
     }
 }
