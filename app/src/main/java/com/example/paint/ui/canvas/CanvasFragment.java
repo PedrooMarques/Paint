@@ -113,7 +113,7 @@ public class CanvasFragment extends Fragment {
 
         // sensors + manager
         sensorManager = (SensorManager) requireActivity().getSystemService(Context.SENSOR_SERVICE);
-        mLAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+        mLAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mLightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
 
         // touch events

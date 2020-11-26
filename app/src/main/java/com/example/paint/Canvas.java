@@ -10,6 +10,7 @@ import android.hardware.SensorEventListener;
 import android.os.Build;
 import android.provider.Settings;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.Pair;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -39,7 +40,7 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
     private float initialY;
 
     // motion sensor
-    private static final float ACCELERATION_THRESHOLD = 5f;
+    private static final float ACCELERATION_THRESHOLD = 8f;
     private static final int SHAKE_SLOP_TIME_MS = 1000;
     private long mShakeTimestamp;
 
@@ -174,25 +175,36 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
     public void onSensorChanged(SensorEvent event) {
 
         // LINEAR ACCELERATION SENSOR
-        if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
-            float x = event.values[0];
-            float y = event.values[1];
-            float z = event.values[2];
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+
+            final float alpha = (float) 0.8;
+
+            // Isolate the force of gravity with the low-pass filter.
+            float[] gravity = new float[3];
+            gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
+            gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
+            gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
+
+            // Remove the gravity contribution with the high-pass filter.
+            float x = event.values[0] - gravity[0];
+            float y = event.values[1] - gravity[1];
+            float z = event.values[2] - gravity[2];
 
             // gForce will be close to 1 when there is no movement.
             float accelMagnitude = (float) Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
 
             if (accelMagnitude >= ACCELERATION_THRESHOLD) {
-//                final long now = System.currentTimeMillis();
-//                // ignore shake events too close to each other (500ms)
-//                if (mShakeTimestamp + SHAKE_SLOP_TIME_MS > now) {
-//                    return;
-//                }
-//
-//                mShakeTimestamp = now;
-//                Toast.makeText(getContext(), "SHAKING", Toast.LENGTH_SHORT).show();
-//                reset();
-//                invalidate();
+                final long now = System.currentTimeMillis();
+                // ignore shake events too close to each other (500ms)
+                if (mShakeTimestamp + SHAKE_SLOP_TIME_MS > now) {
+                    return;
+                }
+
+                Log.d("ACCELERATION", String.valueOf(accelMagnitude));
+                mShakeTimestamp = now;
+                Toast.makeText(getContext(), "SHAKING", Toast.LENGTH_SHORT).show();
+                reset();
+                invalidate();
 
                 //TODO nao sei se e suposto dar reset ou so apagar o ecra
 
