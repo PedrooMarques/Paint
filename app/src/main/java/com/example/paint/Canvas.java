@@ -10,7 +10,6 @@ import android.hardware.SensorEventListener;
 import android.os.Build;
 import android.provider.Settings;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.Pair;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -40,7 +39,7 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
     private float initialY;
 
     // motion sensor
-    private static final float ACCELERATION_THRESHOLD = 8f;
+    private static final float ACCELERATION_THRESHOLD = 10f;
     private static final int SHAKE_SLOP_TIME_MS = 1000;
     private long mShakeTimestamp;
 
@@ -177,7 +176,7 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
         // LINEAR ACCELERATION SENSOR
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
 
-            final float alpha = (float) 0.8;
+            final float alpha = (float) 0.9;
 
             // Isolate the force of gravity with the low-pass filter.
             float[] gravity = new float[3];
@@ -200,16 +199,12 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
                     return;
                 }
 
-                Log.d("ACCELERATION", String.valueOf(accelMagnitude));
                 mShakeTimestamp = now;
                 Toast.makeText(getContext(), "SHAKING", Toast.LENGTH_SHORT).show();
                 reset();
                 invalidate();
 
                 //TODO nao sei se e suposto dar reset ou so apagar o ecra
-
-
-                //TODO o shake funcion a mal so se rodarmos e que da shake
             }
         }
 
