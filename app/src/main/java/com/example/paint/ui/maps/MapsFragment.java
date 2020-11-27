@@ -36,10 +36,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
         GoogleMap.OnPolygonClickListener {
 
     private ArrayList<LatLng> path = new ArrayList<>();
-    private ArrayList<Polyline> polylines = new ArrayList<>();
+    private final ArrayList<Polyline> polylines = new ArrayList<>();
 
-    private LocationManager locationManager;
-    private LocationListener locationListener;
     private Location userLocation;
     private GoogleMap mMap;
     private MapView mapView;
@@ -70,9 +68,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         else {
-            locationManager = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
+            LocationManager locationManager = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
 
-            locationListener = location -> {
+            LocationListener locationListener = location -> {
                 if (userLocation == null)
                     userLocation = new Location(location);
                 else userLocation.set(location);
@@ -95,6 +93,12 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 if (!drawState) {
                     drawState = true;
                     drawButton.setText("STOP DRAWING");
+                    LatLng positionLatLng = new LatLng(userLocation.getLatitude(), userLocation.getLongitude());
+                    if (drawState) {
+                        path.add(positionLatLng);
+                        polylines.add(mMap.addPolyline(new PolylineOptions()
+                                .clickable(true).addAll(path)));
+                    }
                 } else {
                     drawState = false;
                     drawButton.setText("START DRAWING");
@@ -121,7 +125,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Google
                 // their decision.
                 Toast.makeText(getContext(), "PERMISSION REQUIRED", Toast.LENGTH_SHORT).show();
             }
-            return;
         }
         // Other 'case' lines to check for other
         // permissions this app might request.

@@ -17,8 +17,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.example.paint.ui.canvas.CanvasViewModel;
 
@@ -53,7 +51,7 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
     public Canvas(Context context, AttributeSet attrs, GestureDetector gestureDetector, CanvasViewModel canvasViewModel) {
         super(context, attrs);
         this.mGestureDetector = gestureDetector;
-        this.canvasViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(CanvasViewModel.class);
+        this.canvasViewModel = canvasViewModel;
         setOnTouchListener(this);
         paths = new ArrayList<>();
         initPaint();
