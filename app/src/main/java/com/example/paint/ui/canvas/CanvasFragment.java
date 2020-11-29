@@ -29,6 +29,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.paint.Canvas;
 import com.example.paint.GestureListener;
+import com.example.paint.Point;
 import com.example.paint.R;
 import com.example.paint.ui.palette.PaletteViewModel;
 import com.google.firebase.Timestamp;
@@ -37,6 +38,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -160,6 +162,8 @@ public class CanvasFragment extends Fragment {
 
                                     double d;
                                     float f;
+                                    ArrayList<Map> pointMaps = new ArrayList<>();
+                                    ArrayList<Point> points = new ArrayList<>();
 
                                     switch (values.getKey()) {
                                         case "path":
@@ -173,31 +177,35 @@ public class CanvasFragment extends Fragment {
                                                 }
                                             }
                                             break;
-                                        case "initX":
-                                            d = (double) values.getValue();
-                                            f = (float) d;
-                                            customPath.setInitX(f);
-                                            break;
-                                        case "initY":
-                                            d = (double) values.getValue();
-                                            f = (float) d;
-                                            customPath.setInitY(f);
-                                            break;
-                                        case "finalX":
-                                            d = (double) values.getValue();
-                                            f = (float) d;
-                                            customPath.setFinalX(f);
-                                            break;
-                                        case "finalY":
-                                            d = (double) values.getValue();
-                                            f = (float) d;
-                                            customPath.setFinalY(f);
+                                        case "points":
+                                            pointMaps = new ArrayList<Map>((Collection<? extends Map>) values.getValue());
+                                            for (Map m : pointMaps) {
+                                                double xd, yd;
+                                                float x = 0, y = 0;
+                                                for (Object o : m.entrySet()) {
+                                                    Map.Entry entry = (Map.Entry) o;
+                                                    if (entry.getKey().equals("x")) {
+                                                        xd = (double) entry.getValue();
+                                                        x = (float) xd;
+                                                    }
+                                                    if (entry.getKey().equals("y")) {
+                                                        yd = (double) entry.getValue();
+                                                        y = (float) yd;
+                                                    }
+                                                }
+                                                points.add(new Point(x, y));
+                                            }
                                             break;
                                     }
+
+                                    customPath.setPoints(points);
                                 }
 
-                                path.moveTo(customPath.getInitX(), customPath.getInitY());
-                                path.lineTo(customPath.getFinalX(), customPath.getFinalY());
+                                Point p = customPath.getPoints().get(0);
+                                path.moveTo(p.getX(), p.getY());
+                                for (Point nextP : customPath.getPoints()) {
+                                    path.lineTo(nextP.getX(), nextP.getY());
+                                }
                                 pathsList.add(path);
                             }
                         }

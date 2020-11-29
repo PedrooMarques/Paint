@@ -31,6 +31,8 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
     private Path path = new Path();
     private com.example.paint.Path customPath = new com.example.paint.Path();
 
+    private final ArrayList<Point> points = new ArrayList<>();
+
     private CanvasViewModel canvasViewModel;
 
     private GestureDetector mGestureDetector;
@@ -99,15 +101,13 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
                 initialX = eventX;
                 initialY = eventY;
                 // set starting point in custom path
-                customPath.setInitX(eventX);
-                customPath.setInitY(eventY);
+                points.add(new Point(initialX, initialY));
                 return true;
             case MotionEvent.ACTION_MOVE:
                 // makes a line to the point each time this event is fired
                 path.lineTo(eventX, eventY);
-                // set destination point in custom path
-                customPath.setFinalX(eventX);
-                customPath.setFinalY(eventY);
+                // set points in custom path
+                points.add(new Point(eventX, eventY));
                 break;
             case MotionEvent.ACTION_UP:// when you lift your finger
                 // if the position of the click changed (if the user drew) add the path to the list
@@ -117,6 +117,7 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
 
                     // add finished path to custom path
                     // add custom path and paint to customPaths list
+                    customPath.setPoints(points);
                     customPath.setPath(path);
                     customPaths.add(new Pair<>(customPath, customPaint));
                     canvasViewModel.setCustomPaths(customPaths);

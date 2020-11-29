@@ -1,10 +1,12 @@
 package com.example.paint;
 
+import java.util.List;
+
 public class Path {
 
     private android.graphics.Path path;
-    private float initX, initY;
-    private float finalX, finalY;
+
+    private List<Point> points;
 
     public Path() {
     }
@@ -17,35 +19,11 @@ public class Path {
         this.path = path;
     }
 
-    public float getInitX() {
-        return initX;
+    public List<Point> getPoints() {
+        return points;
     }
 
-    public void setInitX(float initX) {
-        this.initX = initX;
-    }
-
-    public float getInitY() {
-        return initY;
-    }
-
-    public void setInitY(float initY) {
-        this.initY = initY;
-    }
-
-    public float getFinalX() {
-        return finalX;
-    }
-
-    public void setFinalX(float finalX) {
-        this.finalX = finalX;
-    }
-
-    public float getFinalY() {
-        return finalY;
-    }
-
-    public void setFinalY(float finalY) {
-        this.finalY = finalY;
+    public void setPoints(List<Point> points) {
+        this.points = points;
     }
 }
