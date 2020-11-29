@@ -107,8 +107,6 @@ public class MainActivity extends AppCompatActivity {
 //        drawer.setBackgroundColor(selectedColor);
 //    }
 
-    //TODO background resets when orientation changed
-
     // This onStop will reset the app background to WHITE when the app closes
     @Override
     protected void onStop() {

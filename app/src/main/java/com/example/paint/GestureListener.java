@@ -12,8 +12,6 @@ public class GestureListener extends GestureDetector.SimpleOnGestureListener
         this.canvas = canvas;
     }
 
-    // TODO em caso de duvidsa, nao podemos por o ontouchevent aqui porque nao tem os metodos necessarios
-
     /**
      * SimpleOnGestureListener
      *

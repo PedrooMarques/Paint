@@ -20,7 +20,6 @@
         app:navGraph="@navigation/mobile_navigation" />
 
     <ImageButton
-        android:id="@+id/paletteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"

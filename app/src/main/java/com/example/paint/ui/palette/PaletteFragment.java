@@ -38,7 +38,6 @@ public class PaletteFragment extends DialogFragment {
         return new PaletteFragment();
     }
 
-    //TODO if the brush changes the palette resets as well
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,

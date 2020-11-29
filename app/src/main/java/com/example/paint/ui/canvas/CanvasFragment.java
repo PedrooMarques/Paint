@@ -162,7 +162,7 @@ public class CanvasFragment extends Fragment {
 
                                     double d;
                                     float f;
-                                    ArrayList<Map> pointMaps = new ArrayList<>();
+                                    ArrayList<Map> pointMaps;
                                     ArrayList<Point> points = new ArrayList<>();
 
                                     switch (values.getKey()) {
@@ -178,7 +178,7 @@ public class CanvasFragment extends Fragment {
                                             }
                                             break;
                                         case "points":
-                                            pointMaps = new ArrayList<Map>((Collection<? extends Map>) values.getValue());
+                                            pointMaps = new ArrayList<>((Collection<? extends Map>) values.getValue());
                                             for (Map m : pointMaps) {
                                                 double xd, yd;
                                                 float x = 0, y = 0;
