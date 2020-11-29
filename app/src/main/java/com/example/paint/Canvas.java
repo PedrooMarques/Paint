@@ -117,6 +117,7 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
 
                     // add finished path to custom path
                     // add custom path and paint to customPaths list
+                    points.add(new Point(-1, -1));
                     customPath.setPoints(points);
                     customPath.setPath(path);
                     customPaths.add(new Pair<>(customPath, customPaint));

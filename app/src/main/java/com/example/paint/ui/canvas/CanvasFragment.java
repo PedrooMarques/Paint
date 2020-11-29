@@ -201,10 +201,15 @@ public class CanvasFragment extends Fragment {
                                     customPath.setPoints(points);
                                 }
 
-                                Point p = customPath.getPoints().get(0);
-                                path.moveTo(p.getX(), p.getY());
-                                for (Point nextP : customPath.getPoints()) {
-                                    path.lineTo(nextP.getX(), nextP.getY());
+                                for (int i = 0; i < customPath.getPoints().size(); i++) {
+                                    Point p = customPath.getPoints().get(i);
+                                    if (i == 0)
+                                        path.moveTo(p.getX(), p.getY());
+                                    if (p.getX() == -1 && p.getY() == -1 && i < customPath.getPoints().size() - 1) {
+                                        i += 1;
+                                        p = customPath.getPoints().get(i);
+                                        path.moveTo(p.getX(), p.getY());
+                                    } else path.lineTo(p.getX(), p.getY());
                                 }
                                 pathsList.add(path);
                             }
@@ -256,7 +261,8 @@ public class CanvasFragment extends Fragment {
                                         }
 
                                         mCanvasViewModel.setPaths(tempPaths);
-
+                                        pathsList.clear();
+                                        paintList.clear();
                                     } else {
                                         Log.w(FIREBASE_TAG, "Error getting documents.", task1.getException());
                                     }
