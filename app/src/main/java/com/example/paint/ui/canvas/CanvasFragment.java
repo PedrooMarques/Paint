@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.hardware.Sensor;
@@ -95,6 +96,170 @@ public class CanvasFragment extends Fragment {
         sensorManager.unregisterListener(paintCanvas);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static void saveCanvas() {
+
+        Map<String, Object> paintMap = new HashMap<>();
+        Map<String, Object> pathsMap = new HashMap<>();
+
+        if (!mCanvasViewModel.getCustomPaths().getValue().isEmpty()) {
+
+            // foreach pair in the view models list of pairs
+            for (Pair<com.example.paint.Path, com.example.paint.Paint> item : Objects.requireNonNull(mCanvasViewModel.getCustomPaths().getValue())) {
+
+                paintMap.put(item.second.toString(), item.second);
+
+                pathsMap.put(item.first.toString(), item.first);
+            }
+
+            // add timestamap to each map to be able get the most recent
+            Timestamp timestamp = new Timestamp(new Date());
+            pathsMap.put("timestamp", timestamp);
+            paintMap.put("timestamp", timestamp);
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("paths")
+                    .add(pathsMap)
+                    .addOnSuccessListener(documentReference -> Log.d(FIREBASE_TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
+                    .addOnFailureListener(e -> Log.w(FIREBASE_TAG, "Error adding document", e));
+            db.collection("paint")
+                    .add(paintMap)
+                    .addOnSuccessListener(documentReference -> Log.d(FIREBASE_TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
+                    .addOnFailureListener(e -> Log.w(FIREBASE_TAG, "Error adding document", e));
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static void loadCanvas() {
+
+        ArrayList<Paint> paintList = new ArrayList<>();
+        ArrayList<Path> pathsList = new ArrayList<>();
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // get paths
+        db.collection("paths")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+
+                        // get the newest doc (it will be the first because its ordered)
+                        DocumentSnapshot recentDoc = Objects.requireNonNull(task.getResult()).getDocuments().get(0);
+
+                        for (Map.Entry<String, Object> e : Objects.requireNonNull(recentDoc.getData()).entrySet()) {
+                            // exclude the last entry (timestamp entry)
+                            if (!e.getKey().equals("timestamp")) {
+
+                                Map<String, Object> tempMap = new HashMap<>((Map<String, Object>) e.getValue());
+
+                                Path path = new Path();
+                                com.example.paint.Path customPath = new com.example.paint.Path();
+
+                                for (Map.Entry<String, Object> values : tempMap.entrySet()) {
+
+                                    double d;
+                                    float f;
+
+                                    switch (values.getKey()) {
+                                        case "path":
+                                            Map<String, Object> map = new HashMap((Map<String, Object>) values.getValue());
+                                            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                                                if (entry.getKey().equals("fillType"))
+                                                    path.setFillType(Path.FillType.valueOf(String.valueOf(entry.getValue())));
+                                                if (entry.getKey().equals("inverseFillType")) {
+                                                    if ((boolean) entry.getValue())
+                                                        path.toggleInverseFillType();
+                                                }
+                                            }
+                                            break;
+                                        case "initX":
+                                            d = (double) values.getValue();
+                                            f = (float) d;
+                                            customPath.setInitX(f);
+                                            break;
+                                        case "initY":
+                                            d = (double) values.getValue();
+                                            f = (float) d;
+                                            customPath.setInitY(f);
+                                            break;
+                                        case "finalX":
+                                            d = (double) values.getValue();
+                                            f = (float) d;
+                                            customPath.setFinalX(f);
+                                            break;
+                                        case "finalY":
+                                            d = (double) values.getValue();
+                                            f = (float) d;
+                                            customPath.setFinalY(f);
+                                            break;
+                                    }
+                                }
+
+                                path.moveTo(customPath.getInitX(), customPath.getInitY());
+                                path.lineTo(customPath.getFinalX(), customPath.getFinalY());
+                                pathsList.add(path);
+                            }
+                        }
+
+                        // get paint
+                        db.collection("paint")
+                                .orderBy("timestamp", Query.Direction.DESCENDING)
+                                .get()
+                                .addOnCompleteListener(task1 -> {
+                                    if (task1.isSuccessful()) {
+                                        // get the newest doc
+                                        DocumentSnapshot recentDoc1 = Objects.requireNonNull(task1.getResult()).getDocuments().get(0);
+
+                                        for (Map.Entry<String, Object> e : Objects.requireNonNull(recentDoc1.getData()).entrySet()) {
+
+                                            if (!e.getKey().equals("timestamp")) {
+
+                                                Map<String, Object> tempMap = new HashMap<>((Map<String, Object>) e.getValue());
+                                                Paint paint = new Paint();
+
+                                                for (Map.Entry values : tempMap.entrySet()) {
+                                                    if (values.getKey().equals("paintStrokeWidth")) {
+                                                        double d = (double) values.getValue();
+                                                        float f = (float) d;
+                                                        paint.setStrokeWidth(f);
+                                                    }
+                                                    if (values.getKey().equals("paintStrokeJoin"))
+                                                        paint.setStrokeJoin(Paint.Join.valueOf(String.valueOf(values.getValue())));
+                                                    if (values.getKey().equals("paintStyle"))
+                                                        paint.setStyle(Paint.Style.valueOf(String.valueOf(values.getValue())));
+                                                    if (values.getKey().equals("paintColor")) {
+                                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                                            //paint.setColor((long) values.getValue());
+                                                            paint.setColor(Color.BLACK);
+                                                        }
+                                                    }
+                                                    if (values.getKey().equals("paintAntiAlias"))
+                                                        paint.setAntiAlias((Boolean) values.getValue());
+                                                }
+
+                                                paintList.add(paint);
+                                            }
+                                        }
+
+                                        ArrayList<Pair<Path, Paint>> tempPaths = new ArrayList<>();
+                                        for (int i = 0; i < pathsList.size(); i++) {
+                                            tempPaths.add(new Pair<>(pathsList.get(i), paintList.get(i)));
+                                        }
+
+                                        mCanvasViewModel.setPaths(tempPaths);
+
+                                    } else {
+                                        Log.w(FIREBASE_TAG, "Error getting documents.", task1.getException());
+                                    }
+                                });
+
+                    } else {
+                        Log.w(FIREBASE_TAG, "Error getting documents.", task.getException());
+                    }
+                });
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -140,6 +305,9 @@ public class CanvasFragment extends Fragment {
             if (mCanvasViewModel.getPaths().getValue() != null)
                 paintCanvas.setPaths(mCanvasViewModel.getPaths().getValue());
 
+            if (mCanvasViewModel.getCustomPaths().getValue() != null)
+                paintCanvas.setCustomPaths(mCanvasViewModel.getCustomPaths().getValue());
+
             mGestureListener.setCanvas(paintCanvas);
 
             // define Canvas as layout view
@@ -153,135 +321,11 @@ public class CanvasFragment extends Fragment {
             mPaletteSharedViewModel.getBrushColor().observe(getViewLifecycleOwner(), paintCanvas::setBrushColor);
 
             mCanvasViewModel.setPaths(paintCanvas.getPaths());
+            mCanvasViewModel.setCustomPaths(paintCanvas.getCustomPaths());
 
             mCanvasViewModel.getCanvasColor().observe(getViewLifecycleOwner(), paintCanvas::setCanvasColor);
             mCanvasViewModel.getPaths().observe(getViewLifecycleOwner(), paintCanvas::setPaths);
+            mCanvasViewModel.getCustomPaths().observe(getViewLifecycleOwner(), paintCanvas::setCustomPaths);
         }
     }
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public static void saveCanvas() {
-
-        Map<String, Object> paintMap = new HashMap<>();
-        Map<String, Object> pathsMap = new HashMap<>();
-
-        if (!mCanvasViewModel.getPaths().getValue().isEmpty()) {
-
-            // foreach pair in the view models list of pairs
-            for (Pair<Path, Paint> item : Objects.requireNonNull(mCanvasViewModel.getPaths().getValue())) {
-                // create a new list replacing the items in the pair (Paint) with a custom paint
-                com.example.paint.Paint customPaint = new com.example.paint.Paint();
-                customPaint.setPaintColor(item.second.getColor());
-                customPaint.setPaintStyle(item.second.getStyle());
-                customPaint.setPaintStrokeWidth(item.second.getStrokeWidth());
-                customPaint.setPaintAntiAlias(item.second.isAntiAlias());
-                customPaint.setPaintStrokeJoin(item.second.getStrokeJoin());
-
-                paintMap.put(item.second.toString(), customPaint);
-
-                pathsMap.put(item.first.toString(), item.first);
-            }
-
-            // add timestamap to each map to be able get the most recent
-            Timestamp timestamp = new Timestamp(new Date());
-            pathsMap.put("timestamp", timestamp);
-            paintMap.put("timestamp", timestamp);
-
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collection("paths")
-                    .add(pathsMap)
-                    .addOnSuccessListener(documentReference -> Log.d(FIREBASE_TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
-                    .addOnFailureListener(e -> Log.w(FIREBASE_TAG, "Error adding document", e));
-            db.collection("paint")
-                    .add(paintMap)
-                    .addOnSuccessListener(documentReference -> Log.d(FIREBASE_TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
-                    .addOnFailureListener(e -> Log.w(FIREBASE_TAG, "Error adding document", e));
-        }
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public static void loadCanvas() {
-
-        ArrayList<Paint> paintList = new ArrayList<>();
-        ArrayList<Path> pathsList = new ArrayList<>();
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        // get paths
-        db.collection("paths")
-                .orderBy("timestamp", Query.Direction.DESCENDING)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-
-                        // get the newest doc (it will be the first because its ordered)
-                        DocumentSnapshot recentDoc = Objects.requireNonNull(task.getResult()).getDocuments().get(0);
-                        for (Map.Entry<String, Object> e : Objects.requireNonNull(recentDoc.getData()).entrySet()) {
-                            Log.d("KEY", e.getKey());
-                            Log.d("TYPE", String.valueOf(e.getValue().getClass()));
-                            if (!e.getKey().equals("timestamp")) {
-                                Map<String, Object> tempMap = new HashMap<>((Map<String, Object>) e.getValue());
-                                for (Object values : tempMap.entrySet()) {
-                                    Log.d(FIREBASE_TAG, values.toString());
-                                    Log.d(FIREBASE_TAG, values.getClass().toString());
-                                    //Path path = ((Path) values);
-                                    //pathsList.add((Path) values);
-                                }
-                            }
-                        }
-
-                        // get paint
-                        db.collection("paint")
-                                .orderBy("timestamp", Query.Direction.DESCENDING)
-                                .get()
-                                .addOnCompleteListener(task1 -> {
-                                    if (task1.isSuccessful()) {
-                                        // get the newest doc
-                                        DocumentSnapshot recentDoc1 = Objects.requireNonNull(task1.getResult()).getDocuments().get(0);
-                                        for (Map.Entry<String, Object> e : Objects.requireNonNull(recentDoc1.getData()).entrySet()) {
-                                            if (!e.getKey().equals("timestamp")) {
-                                                Map<String, Object> tempMap = new HashMap<>((Map<String, Object>) e.getValue());
-                                                Paint paint = new Paint();
-                                                for (Map.Entry values : tempMap.entrySet()) {
-                                                    if (values.getKey().equals("paintStrokeWidth")) {
-                                                        double d = (double) values.getValue();
-                                                        float f = (float) d;
-                                                        paint.setStrokeWidth(f);
-                                                    }
-                                                    if (values.getKey().equals("paintStrokeJoin"))
-                                                        paint.setStrokeJoin(Paint.Join.valueOf(String.valueOf(values.getValue())));
-                                                    if (values.getKey().equals("paintStyle"))
-                                                        paint.setStyle(Paint.Style.valueOf(String.valueOf(values.getValue())));
-                                                    if (values.getKey().equals("paintColor")) {
-                                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                                            paint.setColor((Long) values.getValue());
-                                                        }
-                                                    }
-                                                    if (values.getKey().equals("paintAntiAlias"))
-                                                        paint.setAntiAlias((Boolean) values.getValue());
-                                                }
-
-                                                Log.d("PAINT", String.valueOf(paint.getColor()));
-                                                paintList.add(paint);
-                                            }
-                                        }
-
-                                        ArrayList<Pair<Path, Paint>> tempPaths = new ArrayList<>();
-                                        for (int i = 0; i < pathsList.size(); i++) {
-                                            tempPaths.add(new Pair<>(pathsList.get(i), paintList.get(i)));
-                                        }
-
-                                        mCanvasViewModel.setPaths(tempPaths);
-
-                                    } else {
-                                        Log.w(FIREBASE_TAG, "Error getting documents.", task1.getException());
-                                    }
-                                });
-
-                    } else {
-                        Log.w(FIREBASE_TAG, "Error getting documents.", task.getException());
-                    }
-                });
-    }
-
 }

@@ -25,9 +25,11 @@ import java.util.ArrayList;
 public class Canvas extends View implements View.OnTouchListener, SensorEventListener {
 
     private ArrayList<Pair<Path, Paint>> paths;
+    private ArrayList<Pair<com.example.paint.Path, com.example.paint.Paint>> customPaths;
 
     private final Paint paint = new Paint();
     private Path path = new Path();
+    private com.example.paint.Path customPath = new com.example.paint.Path();
 
     private CanvasViewModel canvasViewModel;
 
@@ -45,6 +47,7 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
         super(context, attrs);
         setOnTouchListener(this);
         paths = new ArrayList<>();
+        customPaths = new ArrayList<>();
         initPaint();
     }
 
@@ -54,6 +57,7 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
         this.canvasViewModel = canvasViewModel;
         setOnTouchListener(this);
         paths = new ArrayList<>();
+        customPaths = new ArrayList<>();
         initPaint();
     }
 
@@ -77,10 +81,13 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
         return false; // let the event go to the rest of the listeners
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
         Paint tempPaint = new Paint(paint);
+
+        com.example.paint.Paint customPaint = new com.example.paint.Paint(paint);
 
         float eventX = event.getX();
         float eventY = event.getY();
@@ -91,17 +98,31 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
                 path.moveTo(eventX, eventY);
                 initialX = eventX;
                 initialY = eventY;
+                // set starting point in custom path
+                customPath.setInitX(eventX);
+                customPath.setInitY(eventY);
                 return true;
             case MotionEvent.ACTION_MOVE:
                 // makes a line to the point each time this event is fired
                 path.lineTo(eventX, eventY);
+                // set destination point in custom path
+                customPath.setFinalX(eventX);
+                customPath.setFinalY(eventY);
                 break;
             case MotionEvent.ACTION_UP:// when you lift your finger
                 // if the position of the click changed (if the user drew) add the path to the list
                 if (initialX != eventX && initialY != eventY) {
                     paths.add(new Pair<>(path, tempPaint));
                     canvasViewModel.setPaths(paths);
+
+                    // add finished path to custom path
+                    // add custom path and paint to customPaths list
+                    customPath.setPath(path);
+                    customPaths.add(new Pair<>(customPath, customPaint));
+                    canvasViewModel.setCustomPaths(customPaths);
+
                     path = new Path();
+                    customPath = new com.example.paint.Path();
                 }
                 performClick();
                 break;
@@ -114,8 +135,17 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
         return true;
     }
 
+    public ArrayList<Pair<com.example.paint.Path, com.example.paint.Paint>> getCustomPaths() {
+        return customPaths;
+    }
+
+    public void setCustomPaths(ArrayList<Pair<com.example.paint.Path, com.example.paint.Paint>> customPaths) {
+        this.customPaths = new ArrayList<>(customPaths);
+    }
+
     public void setPaths(ArrayList<Pair<Path, Paint>> pairs) {
         paths = new ArrayList<>(pairs);
+        invalidate();
     }
 
     public ArrayList<Pair<Path, Paint>> getPaths() {
@@ -147,14 +177,20 @@ public class Canvas extends View implements View.OnTouchListener, SensorEventLis
         initPaint();
         paths.clear();
         canvasViewModel.setPaths(paths);
+
+        customPaths.clear();
+        canvasViewModel.setCustomPaths(customPaths);
     }
 
     public void undo() {
-        if (paths.isEmpty())
+        if (paths.isEmpty() || customPaths.isEmpty())
             Toast.makeText(getContext(), "Nothing to undo", Toast.LENGTH_SHORT).show();
         else {
             paths.remove(paths.size() - 1);
             canvasViewModel.setPaths(paths);
+
+            customPaths.remove(customPaths.size() - 1);
+            canvasViewModel.setCustomPaths(customPaths);
         }
     }
 

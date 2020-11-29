@@ -8,11 +8,20 @@ public class Paint {
 
     private boolean paintAntiAlias;
     private float paintStrokeWidth;
-    private int paintColor;
+    private long paintColor;
     private android.graphics.Paint.Style paintStyle;
     private android.graphics.Paint.Join paintStrokeJoin;
 
     public Paint() {
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public Paint(android.graphics.Paint paint) {
+        setPaintColor(paint.getColor());
+        setPaintStyle(paint.getStyle());
+        setPaintStrokeWidth(paint.getStrokeWidth());
+        setPaintAntiAlias(paint.isAntiAlias());
+        setPaintStrokeJoin(paint.getStrokeJoin());
     }
 
     public boolean isPaintAntiAlias() {
@@ -31,12 +40,12 @@ public class Paint {
         this.paintStrokeWidth = paintStrokeWidth;
     }
 
-    public int getPaintColor() {
+    public long getPaintColor() {
         return paintColor;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void setPaintColor(int paintColor) {
+    public void setPaintColor(long paintColor) {
         this.paintColor = paintColor;
     }
 
